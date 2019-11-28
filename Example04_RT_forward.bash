@@ -24,14 +24,12 @@ if [ "$HOSTNAME" = "miller.local" ] || [ "$HOSTNAME" = "armstrong.local" ]; then
 else
     export PATH="/home/frullan/HighFreqCode/HighFreq_3DRT/Build/bin:$PATH"
 fi
-export EXAMPLE="Ex85_3D_veins_subsampled/"
+export EXAMPLE="Ex04_simulation3D_homo/"
 # Output folder
 if [ "$HOSTNAME" = "maryam.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "blaze.cs.ucl.ac.uk" ]; then
-    export HOST_FOLDER="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/"
-elif [ "$HOSTNAME" = "hannover" ]; then
-    export HOST_FOLDER="/home/wontek/sharedWK/Examples/"
+    export HOST_FOLDER="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/"
 else
-    export HOST_FOLDER="/home/frullan/HighFreqCode/Examples/"
+    export HOST_FOLDER="/home/frullan/HighFreqCode/ExperimentsThesis/"
 fi
 export EXAMPLE_FOLDER=$HOST_FOLDER$EXAMPLE
 export INPUT_FOLDER=$EXAMPLE_FOLDER"input_data/"
@@ -68,6 +66,17 @@ tMax=8.0836e-06
 
 # Step and tMax
 echo "$dt $tMax 0 0 0 0 0 0 0" >> $INPUT_FOLDER$SENSORS
+
+# XY Bottom
+zPos=$(echo "scale=6; 0" | bc)
+for ((j=0; j<Ny; j++)); do
+    for ((i=0; i<Nx; i++)); do
+        xPos=$(echo "scale=6;($i*$dx)" | bc)
+        yPos=$(echo "scale=6;($j*$dy)" | bc)
+        echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta -3.14 3.14 0.04 1.57" >> $INPUT_FOLDER$SENSORS
+    done
+done
+
 # XY Bottom
 zPos=$(echo "scale=6; 0" | bc)
 for ((j=0; j<Ny; j++)); do
@@ -116,5 +125,4 @@ done
 # RUN 
 #====================
 RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
-             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL
-# > $OUTPUT_FOLDER$STDOUT
+             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL > $OUTPUT_FOLDER$STDOUT
