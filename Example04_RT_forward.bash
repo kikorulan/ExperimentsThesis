@@ -26,7 +26,7 @@ else
 fi
 export EXAMPLE="Ex04_simulation3D_homo/"
 # Output folder
-if [ "$HOSTNAME" = "maryam.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "blaze.cs.ucl.ac.uk" ]; then
+if [ "$HOSTNAME" = "maryam.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "blaze.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "ember.cs.ucl.ac.uk" ]; then
     export HOST_FOLDER="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/"
 else
     export HOST_FOLDER="/home/frullan/HighFreqCode/ExperimentsThesis/"
@@ -77,19 +77,9 @@ for ((j=0; j<Ny; j++)); do
     done
 done
 
-# XY Bottom
-zPos=$(echo "scale=6; 0" | bc)
-for ((j=0; j<Ny; j++)); do
-    for ((i=0; i<Nx; i++)); do
-        xPos=$(echo "scale=6;($i*$dx)" | bc)
-        yPos=$(echo "scale=6;($j*$dy)" | bc)
-        echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta -3.14 3.14 0.04 1.57" >> $INPUT_FOLDER$SENSORS
-    done
-done
-
 # XZ - YZ
-for ((k=1; k<Nz; k++)); do
-    zPos=$(echo "scale=6;$k*$dz" | bc)
+for ((k=1; k<Nz-1; k++)); do
+    zPos=$(echo "scale=6;($k*$dz)" | bc)
     # XZ
     yPos=$(echo "scale=6; 0" | bc)
     for ((i=0; i<Nx; i++)); do
@@ -124,5 +114,5 @@ done
 #====================
 # RUN 
 #====================
-RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
-             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL > $OUTPUT_FOLDER$STDOUT
+#RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
+#             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL > $OUTPUT_FOLDER$STDOUT
