@@ -82,7 +82,7 @@ numberSensors = sum(sensor.mask(:))
 % set the input arguments: force the PML to be outside the computational
 % grid; switch off p0 smoothing within kspaceFirstOrder2D
 input_args = {'PMLInside', false, 'PlotPML', false, 'Smooth', false};
-save input_data/sensor_data_veins_3600sensors.mat kgrid medium source sensor input_args;
+save input_data/sensor_data_veins.mat kgrid medium source sensor input_args;
 
 % Save to disk
 filename = 'input_data/Example05_forward_input.h5';
@@ -112,3 +112,46 @@ sensor_adjoint.record = {'p_final'};
 kspaceFirstOrder3D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:}, 'SaveToDisk', 'input_data/Example05_adjoint_input.h5');
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i ./input_data/Example05_adjoint_input.h5 -o ./output_data/Example05_adjoint_output.h5 --p_final');
 
+
+
+%==============================
+% Adjoint - RT DATA
+%==============================
+% Read results
+sensor_data_RT = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
+sensor_data_RT = sensor_data_RT(2:end, :);
+% Number of sensors
+sensor_index = find(sensor.mask == 1);
+nSensors = length(sensor_index);
+
+% Consider all sensors
+source_adjoint.p_mask = sensor.mask;
+source_adjoint.p = fliplr(sensor_data_RT);
+% Sensor
+sensor_adjoint.mask = ones(kgrid.Nx, kgrid.Ny, kgrid.Nz);
+sensor_adjoint.record = {'p_final'};
+% Save and run
+kspaceFirstOrder3D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:}, 'SaveToDisk', 'input_data/Example05_adjoint_RTdata_input.h5');
+system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i input_data/Example05_adjoint_RTdata_input.h5 -o output_data/Example05_adjoint_RTdata_output.h5 --p_final');
+
+%=========================================================================
+% EXTRACT TO RAY TRACING FORMAT
+%=========================================================================
+% kWave
+rt_data = [kgrid.t_array; sensor_data];
+dlmwrite('input_data/forwardSignal_kWave.dat', rt_data, 'delimiter', ' ');
+
+
+% Adjoint 
+pressure_adjoint_PML = h5read('./output_data/Example05_adjoint_output.h5', '/p_final');
+PML_size = 10;
+pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-PML_size, 1+PML_size:end-PML_size);
+pressure_adjoint_cube = cube2matrix(pressure_adjoint);
+dlmwrite('output_data/pressure_adjoint_kWave.dat', pressure_adjoint_cube, 'delimiter', ' ');
+
+% Adjoint - RT data
+pressure_adjoint_PML = h5read('./output_data/Example05_adjoint_RTdata_output.h5', '/p_final');
+PML_size = 10;
+pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-PML_size, 1+PML_size:end-PML_size);
+pressure_adjoint_cube = cube2matrix(pressure_adjoint);
+dlmwrite('output_data/pressure_adjoint_kWave_RTdata.dat', pressure_adjoint_cube, 'delimiter', ' ');

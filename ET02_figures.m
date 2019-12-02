@@ -10,6 +10,7 @@ drawAdjoint = 1;
 drawMix = 1;
 
 
+
 %===============================================================================================================
 %===============================================================================================================
 %=====================                 FORWARD PROBLEM              ============================================
@@ -21,6 +22,33 @@ load gridRT_impulse;
 load signalRT;
 load sensor_data_kWave;
 
+%=============================
+% Initial Pressure
+%=============================
+fontSize = 16;
+position     = [700 700 300 600];
+positionY    = [700 700 320 600];
+positionBar  = [700 700 363 600];
+positionYBar = [700 700 390 600];
+
+load initial_pressure;
+X = 0:Rgrid.dx:(Rgrid.Nx-1)*Rgrid.dx;
+Y = 0:Rgrid.dy:(Rgrid.Ny-1)*Rgrid.dy;
+figure;
+surf(1e3*X, 1e3*Y, initial_pressure', 'EdgeColor', 'none');
+axis tight;
+box on;
+pbaspect([1 2 1]);
+colorbar();
+xlabel('x [mm]');
+ylabel('y [mm]');
+view(2);
+set(gca,'FontSize',fontSize);
+set(gcf, 'pos', positionYBar);
+saveas(gcf, 'Example02_initialPressure', 'png'); 
+saveas(gcf, 'Example02_initialPressure.fig'); 
+
+
 %===============================================================================================================
 % SINOGRAM
 %===============================================================================================================
@@ -28,11 +56,10 @@ nSources = 764;
 dcol_pos = @(x) [x(:, end) x(:, 1:end-1)];
 dcol_neg = @(x) [x(:, 2:end) x(:, 1)];
 
-positionYNoBar     = [700 700 550 630];
-positionNoYBar     = [700 700 600 630];
-positionYBar       = [700 700 620 630];
-positionNoYNoBar   = [700 700 530 630];
-%positionNoYBar = [700 700 610 630];
+position     = [700 700 530 630];
+positionY    = [700 700 550 630];
+positionBar  = [700 700 600 630];
+positionYBar = [700 700 620 630];
 set(0,'DefaultFigurePaperPositionMode','auto');
 
 %========================================
@@ -91,7 +118,7 @@ caxis([-0.4 1]);
 xlabel('t [\mus]');
 ylabel('Sensor');
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionYNoBar);
+set(gcf, 'pos', positionY);
 saveas(gcf, 'Example02_kWave_f2D.fig');
 saveas(gcf, 'Example02_kWave_f2D', 'png');
 
@@ -106,14 +133,14 @@ caxis([-0.4 1]);
 xlabel('t [\mus]');
 %ylabel('Sensor');
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionNoYNoBar);
+set(gcf, 'pos', position);
 saveas(gcf, 'Example02_RT_f2D.fig');
 saveas(gcf, 'Example02_RT_f2D', 'png');
 
 %========================================
 % FIGURES - ERROR
 %========================================
-% Error - RT smoot
+% Error 
 signal = dcol_neg(signalRT_norm);
 error_RT = signal - signalKW_norm;
 figure;
@@ -122,10 +149,11 @@ axis([0 40 1 nSources]);
 view(2);
 box on;
 caxis([-0.5 0.5]);
+colorbar();
 xlabel('t [\mus]');
-ylabel('Sensor');
+%ylabel('Sensor');
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionYNoBar);
+set(gcf,'pos', positionBar);
 saveas(gcf, 'Example02_error_RT_f2D.fig');
 saveas(gcf, 'Example02_error_RT_f2D', 'png');
 
@@ -146,11 +174,12 @@ load gridRT_impulse;
 % Draw parameters
 %========================================
 axisGrid = [0 1e3*(Rgrid.Nx-1)*Rgrid.dx 0 1e3*(Rgrid.Ny-1)*Rgrid.dy];
-position     = [700 700 320 630];
-positionY    = [700 700 340 630];
-positionBar  = [700 700 380 630];
-positionYBar = [700 700 410 630];
-fontSize = 15;
+position     = [700 700 300 600];
+positionY    = [700 700 320 600];
+positionBar  = [700 700 363 600];
+positionYBar = [700 700 390 600];
+
+fontSize = 16;
 set(0,'DefaultFigurePaperPositionMode','auto');
 
 %========================================
@@ -167,6 +196,7 @@ box on;
 xlabel('x [mm]');
 ylabel('y [mm]');
 %set(gca, 'YTick', []);
+pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
 saveas(gcf, 'Example02_kWave_adjoint', 'png');
@@ -183,12 +213,13 @@ figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelRT', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
-%colorbar();
+colorbar();
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
+pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', position);
+set(gcf, 'pos', positionBar);
 saveas(gcf, 'Example02_RT_adjoint', 'png');
 saveas(gcf, 'Example02_RT_adjoint.fig');
 
@@ -203,14 +234,15 @@ figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixel', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
-%colorbar();
+colorbar();
 caxis([-.5 .5]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
 %set(gca, 'YTick', []);
+pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', position);
+set(gcf, 'pos', positionBar);
 saveas(gcf, 'Example02_error_RT', 'png');
 saveas(gcf, 'Example02_error_RT.fig');
 
@@ -231,31 +263,13 @@ load adjointRTForward_kWave;
 % Draw parameters
 %========================================
 axisGrid = [0 1e3*(Rgrid.Nx-1)*Rgrid.dx 0 1e3*(Rgrid.Ny-1)*Rgrid.dy];
-position     = [700 700 320 630];
-positionY    = [700 700 340 630];
-positionBar  = [700 700 380 630];
-positionYBar = [700 700 410 630];
-fontSize = 15;
-set(0,'DefaultFigurePaperPositionMode','auto');
+position     = [700 700 300 600];
+positionY    = [700 700 320 600];
+positionBar  = [700 700 363 600];
+positionYBar = [700 700 390 600];
 
-%========================================
-% RT Adjoint - kWave data
-%========================================
-pixelAReverse = real(adjointKWaveForward_RT);
-pixelKWave = max(0, pixelAReverse/max(pixelAReverse(:)));
-figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
-view(2);
-axis(axisGrid);
-colorbar();
-box on;
-xlabel('x [mm]');
-%ylabel('y [mm]');
-%set(gca, 'YTick', []);
-set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionBar);
-saveas(gcf, 'Example02_RT_adjoint_kWave_data', 'png');
-saveas(gcf, 'Example02_RT_adjoint_kWave_data.fig');
+fontSize = 16;
+set(0,'DefaultFigurePaperPositionMode','auto');
 
 %========================================
 % kWave Adjoint - RT data
@@ -271,10 +285,31 @@ box on;
 xlabel('x [mm]');
 ylabel('y [mm]');
 %set(gca, 'YTick', []);
+pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
 saveas(gcf, 'Example02_kWave_adjoint_RT_data', 'png');
 saveas(gcf, 'Example02_kWave_adjoint_RT_data.fig');
+
+%========================================
+% RT Adjoint - kWave data
+%========================================
+pixelAReverse = real(adjointKWaveForward_RT);
+pixelKWave = max(0, pixelAReverse/max(pixelAReverse(:)));
+figure;
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
+view(2);
+axis(axisGrid);
+colorbar();
+box on;
+xlabel('x [mm]');
+%ylabel('y [mm]');
+%set(gca, 'YTick', []);
+pbaspect([1 2 1]);
+set(gca,'FontSize',fontSize);
+set(gcf, 'pos', positionBar);
+saveas(gcf, 'Example02_RT_adjoint_kWave_data', 'png');
+saveas(gcf, 'Example02_RT_adjoint_kWave_data.fig');
 
 %========================================
 % Error mix kWave Forward - RT recon
@@ -292,6 +327,7 @@ box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
 %set(gca, 'YTick', []);
+pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
 saveas(gcf, 'Example02_mix_error_RT', 'png');
