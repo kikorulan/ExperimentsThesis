@@ -24,7 +24,7 @@ sensor_data_RT    = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
 pressure_adjoint_kWave_matrix        = importdata(['./output_data/pressure_adjoint_kWave.dat'], ' ', 0);
 pressure_adjoint_kWave_RTdata_matrix = importdata(['./output_data/pressure_adjoint_kWave_RTdata.dat'], ' ', 0);
 pressure_adjoint_RT_matrix           = importdata(['./output_data/pressure_adjoint_RT.dat'], ' ', 0);
-pressure_adjoint_RT_kWaveData_matrix = importdata(['./output_data/pressure_adjoint_RT_kWaveData.dat'], ' ', 0);
+%pressure_adjoint_RT_kWaveData_matrix = importdata(['./output_data/pressure_adjoint_RT_kWaveData.dat'], ' ', 0);
 
 %========================================================================================================================
 % INITIAL PRESSURE AND FORWARD SIGNAL
@@ -59,6 +59,6 @@ pressure_adjoint_kWave_RTdata = matrix2cube(pressure_adjoint_kWave_RTdata_matrix
 plot_projection_compact(pressure_adjoint_kWave_RTdata, dx);
 
 % Adjoint RT - kWave data
-pressure_adjoint_RT_kWaveData = matrix2cube(pressure_adjoint_RT_kWaveData_matrix, Nz);
-plot_projection_compact(pressure_adjoint_RT_kWaveData, dx);
+%pressure_adjoint_RT_kWaveData = matrix2cube(pressure_adjoint_RT_kWaveData_matrix, Nz);
+%plot_projection_compact(pressure_adjoint_RT_kWaveData, dx);
 
