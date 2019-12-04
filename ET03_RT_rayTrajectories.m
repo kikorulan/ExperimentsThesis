@@ -74,7 +74,11 @@ Rgrid.computeHamil(sourceSel(3), 'p');
 % Plot results
 %==================================================================================
 
-positionYBar = [700 700 580 630];
+position     = [700 700 300 630];
+positionY    = [700 700 320 630];
+positionBar  = [700 700 363 630];
+positionYBar = [700 700 390 630];
+
 fontSize = 13;
 %==============================
 % Sound Speed
