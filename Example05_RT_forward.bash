@@ -7,7 +7,7 @@
 #$ -l gpu=true
 #$ -l h_rt=100:00:00
 #$ -l tmem=3G
-#$ -N Ex04_adjoint_kWave
+#$ -N Ex05_adjoint
 #$ -S /bin/bash
 
 #$ -o RTsolver.txt
@@ -24,7 +24,7 @@ if [ "$HOSTNAME" = "miller.local" ] || [ "$HOSTNAME" = "armstrong.local" ]; then
 else
     export PATH="/home/frullan/HighFreqCode/HighFreq_3DRT/Build/bin:$PATH"
 fi
-export EXAMPLE="Ex04_simulation3D_homo/"
+export EXAMPLE="Ex05_simulation3D_het/"
 # Output folder
 if [ "$HOSTNAME" = "maryam.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "blaze.cs.ucl.ac.uk" ] || [ "$HOSTNAME" = "ember.cs.ucl.ac.uk" ]; then
     export HOST_FOLDER="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/"
@@ -41,8 +41,8 @@ export DIMENSIONS="dimensions.dat"
 export SOUND_SPEED="sound_speed.dat"
 export INITIAL_PRESSURE="initial_pressure_veins_80x240x240_smooth.dat"
 export SENSORS="sensors_subsampled_180k.dat" 
-export FORWARD_SIGNAL="forwardSignal_kWave.dat"
-export STDOUT="stdout-adjoint-kWave.txt"
+export FORWARD_SIGNAL="forwardSignal_RT.dat"
+export STDOUT="stdout-adjoint.txt"
 
 # Mode
 export MODE="-a"
