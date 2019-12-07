@@ -69,12 +69,12 @@ plot_projection(initial_pressure_veins_smooth, dx);
 %==============================
 % Define the sensors
 sensor.mask = zeros(Nx, Ny, Nz);
-sensor.mask(1, :, :)   = 1;
-sensor.mask(end, :, :) = 1;
-sensor.mask(:, 1, :)   = 1;
-sensor.mask(:, end, :) = 1;
-sensor.mask(:, :, 1)   = 1;
-sensor.mask(:, :, end) = 1;
+sensor.mask(1, 1:2:end, 1:2:end)   = 1;
+%sensor.mask(end, :, :) = 1;
+%sensor.mask(:, 1, :)   = 1;
+%sensor.mask(:, end, :) = 1;
+%sensor.mask(:, :, 1)   = 1;
+%sensor.mask(:, :, end) = 1;
 
 % Number of sensors
 numberSensors = sum(sensor.mask(:))
@@ -117,22 +117,22 @@ system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Exa
 %==============================
 % Adjoint - RT DATA
 %==============================
-% Read results
-sensor_data_RT = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
-sensor_data_RT = sensor_data_RT(2:end, :);
-% Number of sensors
-sensor_index = find(sensor.mask == 1);
-nSensors = length(sensor_index);
-
-% Consider all sensors
-source_adjoint.p_mask = sensor.mask;
-source_adjoint.p = fliplr(sensor_data_RT);
-% Sensor
-sensor_adjoint.mask = ones(kgrid.Nx, kgrid.Ny, kgrid.Nz);
-sensor_adjoint.record = {'p_final'};
-% Save and run
-kspaceFirstOrder3D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:}, 'SaveToDisk', 'input_data/Example05_adjoint_RTdata_input.h5');
-system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i input_data/Example05_adjoint_RTdata_input.h5 -o output_data/Example05_adjoint_RTdata_output.h5 --p_final');
+%%  % Read results
+%%  sensor_data_RT = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
+%%  sensor_data_RT = sensor_data_RT(2:end, :);
+%%  % Number of sensors
+%%  sensor_index = find(sensor.mask == 1);
+%%  nSensors = length(sensor_index);
+%%  
+%%  % Consider all sensors
+%%  source_adjoint.p_mask = sensor.mask;
+%%  source_adjoint.p = fliplr(sensor_data_RT);
+%%  % Sensor
+%%  sensor_adjoint.mask = ones(kgrid.Nx, kgrid.Ny, kgrid.Nz);
+%%  sensor_adjoint.record = {'p_final'};
+%%  % Save and run
+%%  kspaceFirstOrder3D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:}, 'SaveToDisk', 'input_data/Example05_adjoint_RTdata_input.h5');
+%%  system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i input_data/Example05_adjoint_RTdata_input.h5 -o output_data/Example05_adjoint_RTdata_output.h5 --p_final');
 
 %=========================================================================
 % EXTRACT TO RAY TRACING FORMAT
@@ -149,9 +149,9 @@ pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-
 pressure_adjoint_cube = cube2matrix(pressure_adjoint);
 dlmwrite('output_data/pressure_adjoint_kWave.dat', pressure_adjoint_cube, 'delimiter', ' ');
 
-% Adjoint - RT data
-pressure_adjoint_PML = h5read('./output_data/Example05_adjoint_RTdata_output.h5', '/p_final');
-PML_size = 10;
-pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-PML_size, 1+PML_size:end-PML_size);
-pressure_adjoint_cube = cube2matrix(pressure_adjoint);
-dlmwrite('output_data/pressure_adjoint_kWave_RTdata.dat', pressure_adjoint_cube, 'delimiter', ' ');
+%%  % Adjoint - RT data
+%%  pressure_adjoint_PML = h5read('./output_data/Example05_adjoint_RTdata_output.h5', '/p_final');
+%%  PML_size = 10;
+%%  pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-PML_size, 1+PML_size:end-PML_size);
+%%  pressure_adjoint_cube = cube2matrix(pressure_adjoint);
+%%  dlmwrite('output_data/pressure_adjoint_kWave_RTdata.dat', pressure_adjoint_cube, 'delimiter', ' ');

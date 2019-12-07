@@ -50,12 +50,12 @@ plot_projection(initial_pressure_veins_smooth, dx);
 %==============================
 % Define the sensors
 sensor.mask = zeros(Nx, Ny, Nz);
-sensor.mask(1, :, :)   = 1;
-sensor.mask(end, :, :) = 1;
-sensor.mask(:, 1, :)   = 1;
-sensor.mask(:, end, :) = 1;
-sensor.mask(:, :, 1)   = 1;
-sensor.mask(:, :, end) = 1;
+sensor.mask(1, 1:2:end, 1:2:end)   = 1;
+%sensor.mask(end, :, :) = 1;
+%sensor.mask(:, 1, :)   = 1;
+%sensor.mask(:, end, :) = 1;
+%sensor.mask(:, :, 1)   = 1;
+%sensor.mask(:, :, end) = 1;
 
 % Number of sensors
 numberSensors = sum(sensor.mask(:))

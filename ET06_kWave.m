@@ -10,10 +10,10 @@ run colourMap;
 %=========================================================================
 
 % create the computational grid
-Nx = 128;           % number of grid points in the x (row) direction
-Ny = 256;           % number of grid points in the y (column) direction
-dx = 1e-4;        % grid point spacing in the x direction [m]
-dy = 1e-4;        % grid point spacing in the y direction [m]
+Nx = 512;           % number of grid points in the x (row) direction
+Ny = 1024;           % number of grid points in the y (column) direction
+dx = 2.5e-5;        % grid point spacing in the x direction [m]
+dy = 2.5e-5;        % grid point spacing in the y direction [m]
 kgrid = makeGrid(Nx, dx, Ny, dy);
 gridAux = gridRT(Nx, dx, Ny, dy);
 
@@ -26,20 +26,31 @@ medium.sound_speed = c0*ones(Nx, Ny);
 medium.density = 1;
     
 % compute time
-dt = 2e-8;
+dt = 1e-8;
 tMax = 2e-5;
 kgrid.t_array = 0:dt:tMax;
 %[kgrid.t_array, dt] = makeTime(kgrid, medium.sound_speed);
 
 % Build initial pressure
-u0 = zeros(Nx, Ny);
-u0_low  = addCircle(u0, floor(Nx/2), floor(2*Ny/5), floor(Nx/16), 1);
-u0_mid  = addCircle(u0, floor(Nx/2), floor(3*Ny/5), floor(Nx/16), 1);
-u0_high = addCircle(u0, floor(Nx/2), floor(4*Ny/5), floor(Nx/16), 1);
+
+
+% Axis
+[Y, X] = meshgrid(kgrid.y_vec, kgrid.x_vec);
+
+% Build domain
+v1 = -0.3;
+Z1 = X.^2 + (Y+floor(Ny/10)*dy).^2;
+Z2 = X.^2 + (Y-floor(Ny/10)*dy).^2;
+Z3 = X.^2 + (Y-floor(3*Ny/10)*dy).^2;
+sigma = floor(Nx/32)*dx;
+u0_low  = exp(-Z1/sigma/sigma);
+u0_mid  = exp(-Z2/sigma/sigma);
+u0_high = exp(-Z3/sigma/sigma);
+
 % smooth the initial pressure distribution and restore the magnitude
-source_low.p0 = smooth(kgrid, u0_low, true);
-source_mid.p0 = smooth(kgrid, u0_mid, true);
-source_high.p0 = smooth(kgrid, u0_high, true);
+source_low.p0 = u0_low;
+source_mid.p0 = u0_mid;
+source_high.p0 = u0_high;
 
 %=========================================================================
 % SIMULATION
@@ -57,7 +68,7 @@ sensor_data_low = kspaceFirstOrder2D(kgrid, medium, source_low, sensor, input_ar
 sensor_data_mid = kspaceFirstOrder2D(kgrid, medium, source_mid, sensor, input_args{:});
 sensor_data_high = kspaceFirstOrder2D(kgrid, medium, source_high, sensor, input_args{:});
 
-save sensor_data.mat kgrid sensor source_low source_mid source_high medium c0 dt sensor_data_low sensor_data_mid sensor_data_high input_args u0;
+save sensor_data.mat kgrid sensor source_low source_mid source_high medium c0 dt sensor_data_low sensor_data_mid sensor_data_high input_args;
 
 %=========================================================================
 % VISUALISATION

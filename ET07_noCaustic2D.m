@@ -4,11 +4,10 @@
 cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex07_noCaustic2D;
 
 close all;
-%clear all;
+clear all;
 
 load sensor_data.mat;
 
-run colourMap;
 %========================================
 % Grid definition
 %========================================
@@ -28,7 +27,7 @@ gridR.setCMatrix(c);
 % Impulse Response
 %========================================
 % Set time
-dt = 1e-8;
+dt = 4e-9;
 %dt = min(gridR.dx, gridR.dy)/c0/2;
 tMax = 2e-5;
 gridR.setTime(dt, tMax);
@@ -47,7 +46,7 @@ tic;
 start_time = clock;
 
 % Number of rays & sources
-nRays = 100;% 800
+nRays = 2000;% 800
 nSources = 1;%256
 
 % Parametrisation
@@ -65,10 +64,10 @@ source(3) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 % Set initial pressure
 gridR.setUMatrix(imresizen(source_low.p0, factorResize));
 gridR.computeHamil(source(1), 'p');
-%gridR.setUMatrix(imresizen(source_mid.p0, factorResize));
-%gridR.computeHamil(source(2), 'p');
-%gridR.setUMatrix(imresizen(source_high.p0, factorResize));
-%gridR.computeHamil(source(3), 'p');
+gridR.setUMatrix(imresizen(source_mid.p0, factorResize));
+gridR.computeHamil(source(2), 'p');
+gridR.setUMatrix(imresizen(source_high.p0, factorResize));
+gridR.computeHamil(source(3), 'p');
 
 %%  clear source;
 %%  source = gridR.computeForwardParallel(x, 0, pi, nRays, tStep, tMax, false);
@@ -78,12 +77,11 @@ gridR.computeHamil(source(1), 'p');
 %==============================
 normRT = max(real(source(1).aForward));
 sensor_RT_low = source(1).aForward;
-%sensor_RT_mid = source(2).aForward;
-%sensor_RT_high = source(3).aForward;
+sensor_RT_mid = source(2).aForward;
+sensor_RT_high = source(3).aForward;
 
-%save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
+save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
 
-source(1).plot_rays(gridR, 100, 'mm');
 
 %==============================
 % Measure time
