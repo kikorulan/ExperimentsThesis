@@ -1,13 +1,14 @@
 %================================================================================
 % Example for gridRT class
 %===============================================================================
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex07_noCaustic2D;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex08_adjoint2D;
 
 close all;
 clear all;
 
 load sensor_data.mat;
 
+run colourMap;
 %========================================
 % Grid definition
 %========================================
@@ -22,12 +23,11 @@ factorResize = 1;
 c = imresizen(medium.sound_speed, factorResize);
 gridR.setCMatrix(c);
 
-
 %========================================
 % Impulse Response
 %========================================
 % Set time
-dt = 4e-9;
+dt = 2e-9;
 %dt = min(gridR.dx, gridR.dy)/c0/2;
 tMax = 2e-5;
 gridR.setTime(dt, tMax);
@@ -46,20 +46,21 @@ tic;
 start_time = clock;
 
 % Number of rays & sources
-nRays = 2000;% 800
+nRays = 8000;% 800
 nSources = 1;%256
 
 % Parametrisation
-tStep = dt;
+tStep = dt
 
 % Sources locations
 clear x;
-x{1} = cat(3, (gridR.Nx-1)/2*gridR.dx, 0);
+x{1} = cat(3, (gridR.Nx-2)/2*gridR.dx, 0);
 
 % Sources
-source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
-source(2) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
-source(3) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
+source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
+source(2) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
+source(3) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
+source(4) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
 
 % Set initial pressure
 gridR.setUMatrix(imresizen(source_low.p0, factorResize));
@@ -68,27 +69,36 @@ gridR.setUMatrix(imresizen(source_mid.p0, factorResize));
 gridR.computeHamil(source(2), 'p');
 gridR.setUMatrix(imresizen(source_high.p0, factorResize));
 gridR.computeHamil(source(3), 'p');
+gridR.setUMatrix(imresizen(source_low.p0 + source_mid.p0 + source_high.p0, factorResize));
+gridR.computeHamil(source(4), 'p');
 
-%%  clear source;
-%%  source = gridR.computeForwardParallel(x, 0, pi, nRays, tStep, tMax, false);
+%========================================
+% Compute reverse signal
+%========================================
+gridR.inverse_filter(100);
+sensor_low = spline(kgrid.t_array, sensor_data_low(1, :), 0:dt:tMax);
+sensor_mid = spline(kgrid.t_array, sensor_data_mid(1, :), 0:dt:tMax);
+sensor_high = spline(kgrid.t_array, sensor_data_high(1, :), 0:dt:tMax);
 
-%==============================
-% Save results
-%==============================
-normRT = max(real(source(1).aForward));
-sensor_RT_low = source(1).aForward;
-sensor_RT_mid = source(2).aForward;
-sensor_RT_high = source(3).aForward;
+source(1).setForwardSignal(sensor_low);
+source(2).setForwardSignal(sensor_mid);
+source(3).setForwardSignal(sensor_high);
+source(4).setForwardSignal(sensor_low + sensor_mid + sensor_high);
+for n = 1:4
+    gridR.inverse_beam(source(n));
+end
+%Rgrid.computeAdjointParallel(source);
 
-save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
+adjoint_pressure_low_RT  = source(1).pixelAReverse;
+adjoint_pressure_mid_RT  = source(2).pixelAReverse;
+adjoint_pressure_high_RT = source(3).pixelAReverse;
+adjoint_pressure_all_RT  = source(4).pixelAReverse;
 
-
+save adjoint_pressure_RT_2e-9 adjoint_pressure_low_RT adjoint_pressure_mid_RT adjoint_pressure_high_RT adjoint_pressure_all_RT gridR factorResize;
 %==============================
 % Measure time
 %==============================
 end_time = clock;
 % Measure computational time
 disp(['  total computation time ' num2str(etime(end_time, start_time))]);
-
-
 

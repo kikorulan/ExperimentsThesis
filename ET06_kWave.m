@@ -31,9 +31,6 @@ tMax = 2e-5;
 kgrid.t_array = 0:dt:tMax;
 %[kgrid.t_array, dt] = makeTime(kgrid, medium.sound_speed);
 
-% Build initial pressure
-
-
 % Axis
 [Y, X] = meshgrid(kgrid.y_vec, kgrid.x_vec);
 

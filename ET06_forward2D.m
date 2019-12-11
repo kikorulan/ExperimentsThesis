@@ -1,7 +1,7 @@
 %================================================================================
 % Example for gridRT class
 %===============================================================================
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex06_basic2D;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex06_forward2D;
 
 close all;
 %clear all;
@@ -22,7 +22,6 @@ gridR = gridRT(Nx, dx, Ny, dy);
 factorResize = 1;
 c = imresizen(medium.sound_speed, factorResize);
 gridR.setCMatrix(c);
-
 
 %========================================
 % Impulse Response
@@ -81,7 +80,7 @@ sensor_RT_low = source(1).aForward;
 sensor_RT_mid = source(2).aForward;
 sensor_RT_high = source(3).aForward;
 
-%save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
+save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
 
 
 %==============================

@@ -133,4 +133,4 @@ pressure_adjoint_PML = h5read('./output_data/Example04_adjoint_RTdata_output.h5'
 PML_size = 10;
 pressure_adjoint = pressure_adjoint_PML(1+PML_size:end-PML_size, 1+PML_size:end-PML_size, 1+PML_size:end-PML_size);
 pressure_adjoint_cube = cube2matrix(pressure_adjoint);
-dlmwrite('output_data/pressure_adjoint_kWave_RTdata.dat', pressure_adjoint_cube, 'delimiter', ' ');
+dlmwrite('output_data/pressure_adjoint_kWave_RT_data.dat', pressure_adjoint_cube, 'delimiter', ' ');

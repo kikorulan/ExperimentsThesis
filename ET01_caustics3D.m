@@ -8,7 +8,7 @@ close all;
 % Select caustics to compute
 caustic1 = 1;
 caustic2 = 1;
-
+factorScale = 1e3;
 %=========================================================================
 % DOMAIN DEFINITION
 %=========================================================================
@@ -22,6 +22,11 @@ dz = 1e-4;        % grid point spacing in the y direction [m]
 dimensions = [Nx Ny Nz; dx dy dz];
 dlmwrite('dimensions.dat', dimensions, 'delimiter', ' ');
 
+x_axis = 0:dx:(Nx-1)*dx;
+y_axis = 0:dy:(Ny-1)*dy;
+
+position = [700 700 800 300];
+fontSize = 16;
 %=================================================================================================================
 %=================================================================================================================
 %==================                        =======================================================================
@@ -52,14 +57,13 @@ cConv = convn(c, K, 'same')/kernelSize/kernelSize/kernelSize;
 cConv = cConv(1+kernelSize:end-kernelSize, 1+kernelSize:end-kernelSize, 1+kernelSize:end-kernelSize);
 
 % Build initial pressure
-%c_matrix = cube2matrix(repmat(cConvSlice, [1 1 Nz]));
-c_matrix = cube2matrix(cConv);
-dlmwrite('sound_speed_caustic1.dat', c_matrix, 'delimiter', ' ');
-dlmwrite('initial_pressure.dat', c_matrix, 'delimiter', ' ');
+%c_matrix = cube2matrix(cConv);
+%dlmwrite('sound_speed_caustic1.dat', c_matrix, 'delimiter', ' ');
+%dlmwrite('initial_pressure.dat', c_matrix, 'delimiter', ' ');
 
 
 % SIMULATION
-system('./RTsolver dimensions.dat sound_speed_caustic1.dat initial_pressure.dat sensor_caustic1.dat');
+%system('./RTsolver dimensions.dat sound_speed_caustic1.dat initial_pressure.dat sensor_caustic1.dat');
 
 %=======================
 % TRAJECTORIES
@@ -81,63 +85,68 @@ figure;
 ax = gca;
 ax.GridAlpha = 1;
 grid on;
-axis([0 Nx*dx 0 Ny*dy 0 Nz*dz]);
+axis(factorScale*[0 Nx*dx 0 Ny*dy 0 Nz*dz]);
 hold on;
 colours = winter(nRays);
 for n = 1:3:nRays
-    plot3(xCoord(:, n), yCoord(:, n), zCoord(:, n), 'Color', colours(n, :));
+    plot3(factorScale*xCoord(:, n), factorScale*yCoord(:, n), factorScale*zCoord(:, n), 'Color', colours(n, :));
 end
 pbaspect([3 1 1]);
-xlabel('x [m]');
-ylabel('y [m]');
-zlabel('z [m]');
+xlabel('x [mm]');
+ylabel('y [mm]');
+zlabel('z [mm]');
 box on;
+set(gca, 'FontSize', fontSize);
 
 % Sphere
 [X, Y, Z] = sphere;
 xS = (radi*dx*X + Nx*dx/2);
 yS = (radi*dx*Y + Ny*dy/2);
 zS = (radi*dx*Z + Nz*dz/2);
-surf(xS, yS, zS, 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'FaceColor', 'c');
+surf(factorScale*xS, factorScale*yS, factorScale*zS, 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'FaceColor', 'c');
 
 % Caustic
 [X, Y, Z] = sphere;
 xC = (5*dx*X + 0.023);
 yC = (5*dx*Y + (Ny-1)*dy/2);
 zC = (5*dx*Z + (Nz-1)*dz/2);
-surf(xC, yC, zC, 'EdgeColor', 'none', 'FaceColor', 'r');
-saveas(gcf, 'Example01_3D_caustic1_rays', 'png');
+surf(factorScale*xC, factorScale*yC, factorScale*zC, 'EdgeColor', 'none', 'FaceColor', 'r');
+saveas(gcf, 'Example01_3D_caustic1_rays', 'epsc');
 saveas(gcf, 'Example01_3D_caustic1_rays.fig');
 
 %=======================
 % SOUND SPEED
 %=======================
-figure;
-imagesc(permute(cConv(floor(Nx/2), :, :), [2 3 1]));
-title('X slice');
-xlabel('z axis');
-ylabel('y axis');
-colorbar();
-pbaspect([1 1 1]);
-saveas(gcf, 'Example01_3D_caustic1_xSlice', 'png');
-saveas(gcf, 'Example01_3D_caustic1_xSlice.fig');
+% figure;
+% imagesc(permute(cConv(floor(Nx/2), :, :), [2 3 1]));
+% title('X slice');
+% xlabel('z axis');
+% ylabel('y axis');
+% colorbar();
+% pbaspect([1 1 1]);
+% saveas(gcf, 'Example01_3D_caustic1_xSlice', 'png');
+% saveas(gcf, 'Example01_3D_caustic1_xSlice.fig');
+% 
+% figure;
+% imagesc(permute(cConv(:, floor(Ny/2), :), [3 1 2]));
+% title('Y slice');
+% xlabel('x axis');
+% ylabel('z axis');
+% colorbar();
+% pbaspect([3 1 1]);
+% saveas(gcf, 'Example01_3D_caustic1_ySlice', 'png');
+% saveas(gcf, 'Example01_3D_caustic1_ySlice.fig');
 
 figure;
-imagesc(permute(cConv(:, floor(Ny/2), :), [3 1 2]));
-title('Y slice');
-xlabel('x axis');
-ylabel('z axis');
+surf(factorScale*x_axis, factorScale*y_axis, cConv(:, :, floor(Nz/2))', 'EdgeColor', 'none');
+view(2);
+axis tight;
+xlabel('x [mm]');
+ylabel('y [mm]');
 colorbar();
-pbaspect([3 1 1]);
-saveas(gcf, 'Example01_3D_caustic1_ySlice', 'png');
-saveas(gcf, 'Example01_3D_caustic1_ySlice.fig');
-
-figure;
-imagesc(cConv(:, :, floor(Nz/2))');
-title('Z slice');
-xlabel('x axis');
-ylabel('y axis');
-colorbar();
+box on;
+set(gcf, 'pos', position);
+set(gca, 'FontSize', fontSize);
 pbaspect([3 1 1]);
 saveas(gcf, 'Example01_3D_caustic1_zSlice', 'png');
 saveas(gcf, 'Example01_3D_caustic1_zSlice.fig');
@@ -175,12 +184,12 @@ cConv_slice = cConv_slice(1+kernelSize:end-kernelSize, 1+kernelSize:end-kernelSi
 cConv_slice = permute(cConv_slice, [2 1]);
 cConv = repmat(cConv_slice, [1 1 Nz]);
 % Write Cube
-c_matrix = cube2matrix(cConv);
-dlmwrite('sound_speed_caustic2.dat', c_matrix, 'delimiter', ' ');
+%c_matrix = cube2matrix(cConv);
+%dlmwrite('sound_speed_caustic2.dat', c_matrix, 'delimiter', ' ');
 
 
 % SIMULATION
-system('./RTsolver dimensions.dat sound_speed_caustic2.dat initial_pressure.dat sensor_caustic2.dat');
+%system('./RTsolver dimensions.dat sound_speed_caustic2.dat initial_pressure.dat sensor_caustic2.dat');
 
 %=======================
 % TRAJECTORIES
@@ -202,17 +211,18 @@ figure;
 ax = gca;
 ax.GridAlpha = 1;
 grid on;
-axis([0 Nx*dx 0 Ny*dy 0 Nz*dz]);
+axis(factorScale*[0 Nx*dx 0 Ny*dy 0 Nz*dz]);
 hold on;
 colours = winter(nRays);
 for n = 1:2:nRays
-    plot3(xCoord(:, n), yCoord(:, n), zCoord(:, n), 'Color', colours(n, :));
+    plot3(factorScale*xCoord(:, n), factorScale*yCoord(:, n), factorScale*zCoord(:, n), 'Color', colours(n, :));
 end
-xlabel('x [m]');
-ylabel('y [m]');
-zlabel('z [m]');
+xlabel('x [mm]');
+ylabel('y [mm]');
+zlabel('z [mm]');
 pbaspect([3 1 1]);
 box on;
+set(gca, 'FontSize', fontSize);
 
 % Hyperbolic paraboloid
 a = 1/4/(focus-vy)/dx;
@@ -223,7 +233,7 @@ z(:) = Nz*dz/6;
 xPar = [x; x];
 yPar = [y; y];
 zPar = [z; 4*z];
-surf(xPar, yPar, zPar, 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'FaceColor', 'c');
+surf(factorScale*xPar, factorScale*yPar, factorScale*zPar, 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'FaceColor', 'c');
 
 % Caustic
 zC = 0.004:1e-4:0.0085;
@@ -231,49 +241,45 @@ xC = zC;
 xC(:) = 0.0152;
 yC = zC;
 yC(:) = 0.0062;
-plot3(xC, yC, zC, 'Color', 'r', 'LineWidth', 5, 'MarkerSize', 12);
-saveas(gcf, 'Example01_3D_caustic2_rays', 'png');
+plot3(factorScale*xC, factorScale*yC, factorScale*zC, 'Color', 'r', 'LineWidth', 5, 'MarkerSize', 12);
+saveas(gcf, 'Example01_3D_caustic2_rays', 'epsc');
 saveas(gcf, 'Example01_3D_caustic2_rays.fig');
 
 %=======================
 % SOUND SPEED
 %=======================
-figure;
-imagesc(permute(cConv(floor(Nx/2), :, :), [2 3 1]));
-title('X slice');
-xlabel('z axis');
-ylabel('y axis');
-colorbar();
-pbaspect([1 1 1]);
-saveas(gcf, 'Example01_3D_caustic2_xSlice', 'png');
-saveas(gcf, 'Example01_3D_caustic2_xSlice.fig');
+% figure;
+% imagesc(permute(cConv(floor(Nx/2), :, :), [2 3 1]));
+% title('X slice');
+% xlabel('z axis');
+% ylabel('y axis');
+% colorbar();
+% pbaspect([1 1 1]);
+% saveas(gcf, 'Example01_3D_caustic2_xSlice', 'png');
+% saveas(gcf, 'Example01_3D_caustic2_xSlice.fig');
+% 
+% figure;
+% imagesc(permute(cConv(:, floor(Ny/2), :), [3 1 2]));
+% title('Y slice');
+% xlabel('x axis');
+% ylabel('z axis');
+% colorbar();
+% pbaspect([3 1 1]);
+% saveas(gcf, 'Example01_3D_caustic2_ySlice', 'png');
+% saveas(gcf, 'Example01_3D_caustic2_ySlice.fig');
 
 figure;
-imagesc(permute(cConv(:, floor(Ny/2), :), [3 1 2]));
-title('Y slice');
-xlabel('x axis');
-ylabel('z axis');
+surf(factorScale*x_axis, factorScale*y_axis, cConv(:, :, floor(Nz/2))', 'EdgeColor', 'none');
+view(2);
+axis tight;
+xlabel('x [mm]');
+ylabel('y [mm]');
 colorbar();
-pbaspect([3 1 1]);
-saveas(gcf, 'Example01_3D_caustic2_ySlice', 'png');
-saveas(gcf, 'Example01_3D_caustic2_ySlice.fig');
-
-figure;
-imagesc(cConv(:, :, floor(Nz/2))');
-title('Z slice');
-xlabel('x axis');
-ylabel('y axis');
-colorbar();
+box on;
+set(gcf, 'pos', position);
+set(gca, 'FontSize', fontSize);
 pbaspect([3 1 1]);
 saveas(gcf, 'Example01_3D_caustic2_zSlice', 'png');
 saveas(gcf, 'Example01_3D_caustic2_zSlice.fig');
 end
 
-
-%=================================================================================================================
-%=================================================================================================================
-%==================                        =======================================================================
-%==================    CAUSTIC TYPE 3      =======================================================================
-%==================                        =======================================================================
-%=================================================================================================================
-%=================================================================================================================

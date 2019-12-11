@@ -1,5 +1,5 @@
 % Heterogeneous Propagation Medium Example
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex07_noCaustic2D;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex08_adjoint2D;
 
 clear all;
 close all;
@@ -22,14 +22,7 @@ gridAux = gridRT(Nx, dx, Ny, dy);
 %==============================
 % Build domain
 c0 = 1500;
-factor = 0.06;
-% Build Peaks
-frame = 2.5;
-x = -frame:(2*frame)/(Ny-1):frame;
-y = -frame:(2*frame)/(Nx-1):frame;
-[X, Y] = meshgrid(x, y);
-p = peaks(Y, X);
-medium.sound_speed = c0*(ones(Nx, Ny) + factor*p/max(p(:)));
+medium.sound_speed = c0*ones(Nx, Ny);
 medium.density = 1;
     
 % compute time
@@ -42,6 +35,7 @@ kgrid.t_array = 0:dt:tMax;
 [Y, X] = meshgrid(kgrid.y_vec, kgrid.x_vec);
 
 % Build domain
+v1 = -0.3;
 Z1 = X.^2 + (Y+floor(Ny/10)*dy).^2;
 Z2 = X.^2 + (Y-floor(Ny/10)*dy).^2;
 Z3 = X.^2 + (Y-floor(3*Ny/10)*dy).^2;
@@ -56,11 +50,10 @@ source_mid.p0 = u0_mid;
 source_high.p0 = u0_high;
 
 %=========================================================================
-% SIMULATION
+% SIMULATION - FORWARD
 %=========================================================================
 % Define the sensors
 sensor.mask = zeros(Nx, Ny);
-%sensor.mask(1, :) = 1;
 sensor.mask(floor(Nx/2), 1) = 1;
 
 % set the input arguements: force the PML to be outside the computational
@@ -72,6 +65,28 @@ sensor_data_mid = kspaceFirstOrder2D(kgrid, medium, source_mid, sensor, input_ar
 sensor_data_high = kspaceFirstOrder2D(kgrid, medium, source_high, sensor, input_args{:});
 
 save sensor_data.mat kgrid sensor source_low source_mid source_high medium c0 dt sensor_data_low sensor_data_mid sensor_data_high input_args;
+
+%=========================================================================
+% SIMULATION - ADJOINT
+%=========================================================================
+% Input arguments
+input_args = {'PMLInside', false, 'PlotPML', false, 'Smooth', false};
+% Sensors
+sensor_adjoint.mask = ones(kgrid.Nx, kgrid.Ny);
+sensor_adjoint.record = {'p_final'};
+% Source
+source_adjoint.p_mask = zeros(kgrid.Nx, kgrid.Ny);
+source_adjoint.p_mask(floor(Nx/2), 1) = 1;
+
+% Simulations
+source_adjoint.p = fliplr(sensor_data_low);
+adjoint_pressure_low = kspaceFirstOrder2D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:});
+source_adjoint.p = fliplr(sensor_data_mid);
+adjoint_pressure_mid = kspaceFirstOrder2D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:});
+source_adjoint.p = fliplr(sensor_data_high);
+adjoint_pressure_high = kspaceFirstOrder2D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:});
+
+save adjoint_data.mat kgrid adjoint_pressure_low adjoint_pressure_mid adjoint_pressure_high input_args;
 
 %=========================================================================
 % VISUALISATION

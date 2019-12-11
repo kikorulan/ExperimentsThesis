@@ -52,6 +52,7 @@ position = [700 500 320 900];
 positionYBar = [700 700 375 900];
 positionBar = [700 700 375 900];
 set(0,'DefaultFigurePaperPositionMode','auto');
+fontSize = 16;
 %==========================================================================================
 %========                      ============================================================
 %========    CAUSTIC TYPE 1    ============================================================
@@ -104,6 +105,8 @@ gridR.computeHamil(source(1), 'p');
 gridR.plot_soundSpeed();
 set(gcf, 'pos', positionYBar);
 colorbar();
+box on;
+set(gca, 'FontSize', fontSize);
 saveas(gcf, 'Example01_2D_caustic1_C', 'png'); 
 saveas(gcf, 'Example01_2D_caustic1_C.fig'); 
 
@@ -133,7 +136,8 @@ y2 = 38 - 0.16*(x2+(18-6.3-6.3)).^2;
 plot(x1, y1, 'LineWidth', 2, 'Color', 'r');
 plot(x2, y2, 'LineWidth', 2, 'Color', 'r');
 % Save
-saveas(gcf, 'Example01_2D_caustic1_rays', 'png');
+set(gca, 'FontSize', fontSize);
+saveas(gcf, 'Example01_2D_caustic1_rays', 'epsc');
 saveas(gcf, 'Example01_2D_caustic1_rays.fig');
 
 
@@ -192,6 +196,7 @@ gridR.computeHamil(source(1), 'p');
 gridR.plot_soundSpeed();
 set(gcf, 'pos', positionYBar);
 colorbar();
+set(gca, 'FontSize', fontSize);
 saveas(gcf, 'Example01_2D_caustic2_C', 'png'); 
 saveas(gcf, 'Example01_2D_caustic2_C.fig'); 
 
@@ -218,7 +223,8 @@ yR = 9*(xR-5.95) + 20;
 plot(xR, yR, 'LineWidth', 2, 'Color', 'r');
 
 % Save
-saveas(gcf, 'Example01_2D_caustic2_rays', 'png'); 
+set(gca, 'FontSize', fontSize);
+saveas(gcf, 'Example01_2D_caustic2_rays', 'epsc'); 
 saveas(gcf, 'Example01_2D_caustic2_rays.fig'); 
 
 
