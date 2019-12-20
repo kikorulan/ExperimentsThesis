@@ -61,7 +61,7 @@ EOF
 #==============================
 nRaysPhi=1024 
 nRaysTheta=1024
-dt=1.6667e-8
+dt=1.667e-8
 tMax=8.0836e-06
 
 # Step and tMax

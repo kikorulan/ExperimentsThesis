@@ -48,8 +48,8 @@ medium.sound_speed = c;
 medium.density = 1;
 
 % compute time
-dt = 1.5e-8;
-Nt = 539;
+dt = 1.667e-8;
+Nt = 486;
 tMax = dt*(Nt-1);
 kgrid.t_array = 0:dt:tMax;
 
