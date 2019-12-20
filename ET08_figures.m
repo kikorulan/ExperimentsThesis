@@ -7,11 +7,12 @@ close all;
 load sensor_data.mat;
 load adjoint_data.mat;
 
-saveFigures = 1;
-
+saveFigures = 0;
+loadData = 0;
 %==================================================================================
 % Plot results
 %==================================================================================
+factorResize = 1;
 
 position = [700 500 320 600];
 positionYBar = [700 700 375 600];
@@ -27,8 +28,9 @@ figure;
 % ERROR PLOT
 % kWave and RT
 %================================================================================
-
+if(loadData)
 load adjoint_pressure_RT_8e-9;
+end
 p_kWave_low = imresizen(adjoint_pressure_low.p_final', factorResize);
 p_kWave_mid = imresizen(adjoint_pressure_mid.p_final', factorResize);
 p_kWave_high = imresizen(adjoint_pressure_high.p_final', factorResize);
@@ -36,7 +38,9 @@ p_kWave_high = imresizen(adjoint_pressure_high.p_final', factorResize);
 %==============================
 % DT = 8e-9
 %==============================
+if(loadData)
 load adjoint_pressure_RT_8e-9;
+end
 p_RT_low = adjoint_pressure_low_RT';
 p_RT_mid = adjoint_pressure_mid_RT';
 p_RT_high = adjoint_pressure_high_RT';
@@ -52,7 +56,9 @@ error_high_dt1 = sum(dif_high_dt1(:).^2)/sum(p_kWave_high(:).^2);
 %==============================
 % DT = 4e-9
 %==============================
+if(loadData)
 load adjoint_pressure_RT_4e-9;
+end
 p_RT_low = adjoint_pressure_low_RT';
 p_RT_mid = adjoint_pressure_mid_RT';
 p_RT_high = adjoint_pressure_high_RT';
@@ -69,7 +75,9 @@ error_high_dt2 = sum(dif_high_dt2(:).^2)/sum(p_kWave_high(:).^2);
 %==============================
 % DT = 2e-9
 %==============================
+if(loadData)
 load adjoint_pressure_RT_2e-9;
+end
 p_RT_low = adjoint_pressure_low_RT';
 p_RT_mid = adjoint_pressure_mid_RT';
 p_RT_high = adjoint_pressure_high_RT';

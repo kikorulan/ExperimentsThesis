@@ -7,6 +7,7 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 %clear all;
 
 load adjoint_kWave.mat;
+load signalRT;
 % Measure computational time
 tic;
 start_time = clock;
@@ -23,6 +24,9 @@ Rgrid.inverse_filter(100);
 
 %aReverse = Rgrid.inverse_beam_adjoint();
 nSources = 764;
+for n = 1:nSources
+    source(n).setForwardSignal(signalRT(n, :));
+end
 for n = 1:nSources
     disp(n)
     Rgrid.inverse_beam(source(n));

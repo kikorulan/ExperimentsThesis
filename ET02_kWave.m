@@ -12,8 +12,8 @@ run colourMap;
 % create the computational grid
 Nx = 128;           % number of grid points in the x (row) direction
 Ny = 256;           % number of grid points in the y (column) direction
-dx = 2e-4;        % grid point spacing in the x direction [m]
-dy = 2e-4;        % grid point spacing in the y direction [m]
+dx = 1e-4;        % grid point spacing in the x direction [m]
+dy = 1e-4;        % grid point spacing in the y direction [m]
 kgrid = makeGrid(Nx, dx, Ny, dy);
 
 %==============================
@@ -26,8 +26,8 @@ medium.sound_speed = c0*ones(Nx, Ny);
 medium.density = 1;
     
 % compute time
-dt = 5e-8;
-tMax = 4e-5;
+dt = 1e-8;
+tMax = 2.5e-5;
 kgrid.t_array = 0:dt:tMax;
 %[kgrid.t_array, dt] = makeTime(kgrid, medium.sound_speed);
 

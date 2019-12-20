@@ -9,7 +9,7 @@ export PATH="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCod
 export EXAMPLE="Ex10_forward3D/"
 export HOST_FOLDER="/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/"
 export EXAMPLE_FOLDER=$HOST_FOLDER$EXAMPLE
-export OUTPUT_FOLDER=$EXAMPLE_FOLDER"output_data/"
+export OUTPUT_FOLDER=$EXAMPLE_FOLDER"output_data"
 cd $EXAMPLE_FOLDER
 
 # Assign files
@@ -22,23 +22,35 @@ export FORWARD_SIGNAL="forwardSignal_RT.dat"
 # Mode
 export MODE="-f"
 export GPU_INDEX=0
+export RESOLUTION=3
 # Generate dimensions file
-#Nx=1024 dx=0.000025
-#Ny=512 dy=0.000025
-#Nz=512 dz=0.000025
-#Nx=512 dx=0.00005
-#Ny=256 dy=0.00005
-#Nz=256 dz=0.00005
-Nx=256 dx=0.0001
-Ny=128 dy=0.0001
-Nz=128 dz=0.0001
+case $RESOLUTION in
+    1)
+        echo "RESOLUTION 1024x512x512"
+        Nx=1024 dx=0.000025
+        Ny=512 dy=0.000025
+        Nz=512 dz=0.000025
+        ;;
+    2)
+        echo "RESOLUTION 512x256x256"
+        Nx=512 dx=0.00005
+        Ny=256 dy=0.00005
+        Nz=256 dz=0.00005
+        ;;
+    3)
+        echo "RESOLUTION 256x128x128"
+        Nx=256 dx=0.0001
+        Ny=128 dy=0.0001
+        Nz=128 dz=0.0001
+        ;;
+esac
 cat > $INPUT_FOLDER$DIMENSIONS <<EOF
 $Nx $Ny $Nz
 $dx $dy $dz
 EOF
 
-# Sound speed
-export SOUND_SPEED="sound_speed_1500.dat"
+# Sound speed 
+export SOUND_SPEED="sound_speed_1500_"$Nx$".dat"
 
 # Parameters
 nRaysPhi=1024
@@ -63,9 +75,9 @@ echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
 echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
 
 #====================
 # RUN 
@@ -82,7 +94,7 @@ mv $OUTPUT_FOLDER"/ForwardSignal.dat" forwardSignal_RT_mid_$dt.dat
 export INITIAL_PRESSURE="u0_high_"$Nx".dat"
 RTsolver_GPU $MODE $DIMENSIONS $SOUND_SPEED $INITIAL_PRESSURE $SENSORS_HIGH $OUTPUT_FOLDER $FORWARD_SIGNAL
 mv $OUTPUT_FOLDER"/ForwardSignal.dat" forwardSignal_RT_high_$dt.dat
-
+  
 #==============================
 # SENSORS
 #==============================
@@ -97,9 +109,9 @@ echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
 echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
 
 #====================
 # RUN 
@@ -131,9 +143,9 @@ echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
 echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
+#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
 #====================
 # RUN 
 #====================

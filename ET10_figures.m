@@ -3,7 +3,7 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 clear all;
 close all;
 
-saveFigures = 1;
+saveFigures = 0;
 %==================================================
 % Dimensions
 %==================================================
@@ -61,6 +61,7 @@ sensor_RT_mid_dt3  = sum(sensor_RT_mid_dt3(2:end, :), 1)/(size(sensor_RT_mid_dt3
 sensor_RT_high_dt3 = importdata(['forwardSignal_RT_high_1e-8.dat'], ' ', 0);
 sensor_RT_high_dt3 = sum(sensor_RT_high_dt3(2:end, :), 1)/(size(sensor_RT_high_dt3, 1)-1);
 
+
 %========================================================================================================================
 % INITIAL PRESSURE AND FORWARD SIGNAL
 %========================================================================================================================
@@ -73,7 +74,7 @@ spline_high = spline(kgrid.t_array, sensor_data_high(1, :)/normKWave, tForward_d
 % Subplot 1
 figure;
 hold on;
-axis([0 20 -1.2 1.2]);
+%axis([0 20 -1.2 1.2]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt1, sensor_RT_low_dt1/normRT, 'Color', 'r', 'LineWidth', 2);
@@ -107,9 +108,9 @@ box on;
 plot(scaleFactor*tForward_dt2, sensor_RT_low_dt2/normRT, 'Color', 'r', 'LineWidth', 2);
 plot(scaleFactor*tForward_dt2, sensor_RT_mid_dt2/normRT, 'Color', 'g', 'LineWidth', 2);
 plot(scaleFactor*tForward_dt2, sensor_RT_high_dt2/normRT, 'Color', 'b', 'LineWidth', 2);
-%plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
+plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
 legend('RT - bottom', 'RT - middle', 'RT - top', 'kWave - middle', 'kWave - bottom', 'kWave - top');
 %xlabel('t [\mus]');
   
@@ -128,9 +129,9 @@ box on;
 plot(scaleFactor*tForward_dt3, sensor_RT_low_dt3/normRT, 'Color', 'r', 'LineWidth', 2);
 plot(scaleFactor*tForward_dt3, sensor_RT_mid_dt3/normRT, 'Color', 'g', 'LineWidth', 2);
 plot(scaleFactor*tForward_dt3, sensor_RT_high_dt3/normRT, 'Color', 'b', 'LineWidth', 2);
-%plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
+plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
 legend('RT - bottom', 'RT - middle', 'RT - top', 'kWave - middle', 'kWave - bottom', 'kWave - top');
 
 %==============================

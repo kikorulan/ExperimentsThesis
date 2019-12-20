@@ -9,6 +9,7 @@ close all;
 load sensor_data.mat;
 
 run colourMap;
+saveData = 0;
 %========================================
 % Grid definition
 %========================================
@@ -27,7 +28,7 @@ gridR.setCMatrix(c);
 % Impulse Response
 %========================================
 % Set time
-dt = 8e-9;
+dt = 4e-9;
 %dt = min(gridR.dx, gridR.dy)/c0/2;
 tMax = 2e-5;
 gridR.setTime(dt, tMax);
@@ -80,8 +81,9 @@ sensor_RT_low = source(1).aForward;
 sensor_RT_mid = source(2).aForward;
 sensor_RT_high = source(3).aForward;
 
+if(saveData)
 save sensor_data_RT_8e-9.mat factorResize gridR normRT sensor_RT_low sensor_RT_mid sensor_RT_high;
-
+end
 
 %==============================
 % Measure time

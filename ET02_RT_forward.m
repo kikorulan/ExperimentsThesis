@@ -3,8 +3,8 @@
 %===============================================================================
 cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex02_simulation2D_homo;
 
-close all;
-%clear all;
+%close all;
+clear all;
 
 load sensor_data_kWave.mat;
 load initial_pressure;
@@ -13,8 +13,8 @@ load initial_pressure;
 %========================================
 Nx = 128;           % number of Rgrid points in the x (row) direction
 Ny = 256;           % number of Rgrid points in the y (column) direction
-dx = 2e-4;        % Rgrid point spacing in the x direction [m]
-dy = 2e-4;        % Rgrid point spacing in the y direction [m]
+dx = 1e-4;        % Rgrid point spacing in the x direction [m]
+dy = 1e-4;        % Rgrid point spacing in the y direction [m]
 Rgrid = gridRT(Nx, dx, Ny, dy);
 
 % Build domain
@@ -25,20 +25,19 @@ Rgrid.setUMatrix(initial_pressure);
 % Impulse Response
 %========================================
 % Set time
-dt = 5e-8;
-tMax = 4e-5;
+dt = 1e-8;
+tMax = 2.5e-5;
 Rgrid.setTime(dt, tMax);
 % Compute impulse response
-Rgrid.impulse_additive('IV');
+Rgrid.impulse_additive('load');
 
-save gridRT_impulse.mat Rgrid;
+save gridRT_impulse.mat Rgrid dt;
 
 %========================================
 % Ray Shooting Parameters
 %========================================
 load gridRT_impulse;
 cMax = max(Rgrid.c(:));
-dt = 5e-8;
 %dt = min(Rgrid.dx, Rgrid.dy)/cMax/2;
 
 % Measure computational time
@@ -46,7 +45,7 @@ tic;
 start_time = clock;
 
 % Number of rays & sources
-nRays = 2000;% 800
+nRays = 4000;% 800
 nSources = 764;%256
 
 % Parametrisation
@@ -58,6 +57,7 @@ tStep = dt;
 %========================================
 % Sources locations
 clear x;
+x1{1} = cat(3, 0, 0);
 for n = 1:Rgrid.Nx
     x{n} = cat(3, (n-1)*Rgrid.dx, 0);
 end
@@ -76,8 +76,7 @@ end
 %%      signalRT(n, :) = source.aForward;
 %%  end
 
-
-
+%source = Rgrid.computeForwardParallel(x1, 0, 2*pi-0.01, nRays, tStep, tMax, 'p', true);
 source = Rgrid.computeForwardParallel(x, 0, 2*pi-0.01, nRays, tStep, tMax, 'p', true);
 signalRT = zeros(nSources, length(source(1).aForward));
 for n = 1:nSources
@@ -85,4 +84,4 @@ for n = 1:nSources
 end
 
 
-save signalRT signalRT;
+save signalRT signalRT Rgrid;

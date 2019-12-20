@@ -1,7 +1,7 @@
 cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex11_forward3D_het;
 
 clear all;
-%close all;
+close all;
 
 saveFigures = 1;
 %==================================================
@@ -20,29 +20,29 @@ positionHorizontal = [700 700 1000 400];
 %==================================================
 % Load data
 %==================================================
-x_axis = 0:dx:(Nx-1)*dx;
-y_axis = 0:dy:(Ny-1)*dy;
-
-% Forward data
-sound_speed_matrix = importdata('sound_speed.dat', ' ', 0);
-% Initial Pressure
-sound_speed = matrix2cube(sound_speed_matrix, Nz);
-figure;
-imagesc(1e3*y_axis, 1e3*x_axis, sound_speed(:, :, floor(Nz/2)));
-view(2);
-box on;
-axis tight;
-xlabel('y [mm]');
-ylabel('x [mm]');
-colorbar();
-set(gca,'FontSize',fontSize);
-positionYBar = [700 700 375 600];
-set(gcf, 'pos', positionYBar);
-pbaspect([1 2 1])
-if(saveFigures)
-saveas(gcf, 'Example11_SoundSpeed', 'png');
-saveas(gcf, 'Example11_SoundSpeed.fig');
-end
+%%  x_axis = 0:dx:(Nx-1)*dx;
+%%  y_axis = 0:dy:(Ny-1)*dy;
+%%  
+%%  % Forward data
+%%  sound_speed_matrix = importdata('sound_speed.dat', ' ', 0);
+%%  % Initial Pressure
+%%  sound_speed = matrix2cube(sound_speed_matrix, Nz);
+%%  figure;
+%%  imagesc(1e3*y_axis, 1e3*x_axis, sound_speed(:, :, floor(Nz/2)));
+%%  view(2);
+%%  box on;
+%%  axis tight;
+%%  xlabel('y [mm]');
+%%  ylabel('x [mm]');
+%%  colorbar();
+%%  set(gca,'FontSize',fontSize);
+%%  positionYBar = [700 700 375 600];
+%%  set(gcf, 'pos', positionYBar);
+%%  pbaspect([1 2 1])
+%%  if(saveFigures)
+%%  saveas(gcf, 'Example11_SoundSpeed', 'png');
+%%  saveas(gcf, 'Example11_SoundSpeed.fig');
+%%  end
 
 
 
@@ -103,7 +103,6 @@ saveas(gcf, 'Example11_RTvsKWAVE_4e-8', 'epsc');
 saveas(gcf, 'Example11_RTvsKWAVE_4e-8.fig');
 end
 
-normKWave = max(sensor_data_high(1, :));
 normRT = normKWave; %max(sensor_RT_high_dt2);
 spline_low = spline(kgrid.t_array, sensor_data_low(1, :)/normKWave, tForward_dt2);
 spline_mid = spline(kgrid.t_array, sensor_data_mid(1, :)/normKWave, tForward_dt2);
@@ -114,17 +113,16 @@ hold on;
 %axis([0 20 -.6 1.1]);
 grid on;
 box on;
-plot(scaleFactor*tForward_dt2, sensor_RT_low_dt2/normRT, 'Color', 'r', 'LineWidth', 2);
-plot(scaleFactor*tForward_dt2, sensor_RT_mid_dt2/normRT, 'Color', 'g', 'LineWidth', 2);
-plot(scaleFactor*tForward_dt2, sensor_RT_high_dt2/normRT, 'Color', 'b', 'LineWidth', 2);
-%plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
-%plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
+%plot(scaleFactor*tForward_dt2, sensor_RT_low_dt2/normRT, 'Color', 'r', 'LineWidth', 2);
+%plot(scaleFactor*tForward_dt2, sensor_RT_mid_dt2/normRT, 'Color', 'g', 'LineWidth', 2);
+%plot(scaleFactor*tForward_dt2, sensor_RT_high_dt2/normRT, 'Color', 'b', 'LineWidth', 2);
+plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
+plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
 legend('RT - bottom', 'RT - middle', 'RT - top', 'kWave - middle', 'kWave - bottom', 'kWave - top');
 %xlabel('t [\mus]');
 
 
-normKWave = max(sensor_data_high(1, :));
 normRT = normKWave; %max(sensor_RT_high_dt3);
 spline_low = spline(kgrid.t_array, sensor_data_low(1, :)/normKWave, tForward_dt3);
 spline_mid = spline(kgrid.t_array, sensor_data_mid(1, :)/normKWave, tForward_dt3);
@@ -164,7 +162,7 @@ error_high_dt1 = sum(dif_high_dt1.^2)/sum(spline_high.^2);
 
 figure;
 hold on;
-axis([0 20 -.15 .15]);
+axis([0 20 -.2 .2]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt1, dif_low_dt1, 'Color', 'r', 'LineWidth', 2);
@@ -203,7 +201,7 @@ error_high_dt2 = sum(dif_high_dt2.^2)/sum(spline_high.^2);
 
 figure;
 hold on;
-axis([0 20 -.15 .15]);
+axis([0 20 -.2 .2]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt2, dif_low_dt2, 'Color', 'r', 'LineWidth', 2);
@@ -242,7 +240,7 @@ error_high_dt3 = sum(dif_high_dt3.^2)/sum(spline_high.^2);
 
 figure;
 hold on;
-axis([0 20 -.15 .15]);
+axis([0 20 -.2 .2]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt3, dif_low_dt3, 'Color', 'r', 'LineWidth', 2);
@@ -276,7 +274,7 @@ hold on;
 grid on;
 box on;
 axis([0 50 1e-4 2e-1]);
-ylabel('Error convergence');
+ylabel('Error');
 xlabel('t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
@@ -292,41 +290,41 @@ end
 %=========================================================================
 % TRAJECTORIES
 %=========================================================================
-% Import data
-filenameData = 'output_data/Trajectory0.dat';
-trajectories = importdata(filenameData, ' ', 0);
-
-% Read number of rays and steps
-[nSteps nRays] = size(trajectories);
-%nRays = floor(nRays/2);
-xCoord = trajectories(:, 1:3:nRays);
-yCoord = trajectories(:, 2:3:nRays);
-zCoord = trajectories(:, 3:3:nRays);
-
-nRays = floor(nRays/3);
-factorScale = 1e3;
-% Plot the figure
-figure;
-ax = gca;
-ax.GridAlpha = 0.2;
-grid on;
-axis(factorScale*[0 Ny*dy 0 Nz*dz 0 Nx*dx]);
-hold on;
-colours = winter(nRays);
-for n = 1:1:nRays
-    plot3(factorScale*yCoord(:, n), factorScale*zCoord(:, n), factorScale*xCoord(:, n), 'Color', colours(n, :));
-end
-xlabel('y [mm]');
-ylabel('z [mm]');
-zlabel('x [mm]');
-pbaspect([1 1 2]);
-box on;
-positionYBar = [700 700 375 600];
-set(gca, 'Zdir', 'reverse');
-set(gca, 'FontSize', fontSize);
-set(gcf, 'pos', positionYBar);
-view(0, 0);
-if(saveFigures)
-saveas(gcf, 'Example11_rays', 'epsc');
-saveas(gcf, 'Example11_rays.fig');
-end
+%%  % Import data
+%%  filenameData = 'output_data/Trajectory0.dat';
+%%  trajectories = importdata(filenameData, ' ', 0);
+%%  
+%%  % Read number of rays and steps
+%%  [nSteps nRays] = size(trajectories);
+%%  %nRays = floor(nRays/2);
+%%  xCoord = trajectories(:, 1:3:nRays);
+%%  yCoord = trajectories(:, 2:3:nRays);
+%%  zCoord = trajectories(:, 3:3:nRays);
+%%  
+%%  nRays = floor(nRays/3);
+%%  factorScale = 1e3;
+%%  % Plot the figure
+%%  figure;
+%%  ax = gca;
+%%  ax.GridAlpha = 0.2;
+%%  grid on;
+%%  axis(factorScale*[0 Ny*dy 0 Nz*dz 0 Nx*dx]);
+%%  hold on;
+%%  colours = winter(nRays);
+%%  for n = 1:1:nRays
+%%      plot3(factorScale*yCoord(:, n), factorScale*zCoord(:, n), factorScale*xCoord(:, n), 'Color', colours(n, :));
+%%  end
+%%  xlabel('y [mm]');
+%%  ylabel('z [mm]');
+%%  zlabel('x [mm]');
+%%  pbaspect([1 1 2]);
+%%  box on;
+%%  positionYBar = [700 700 375 600];
+%%  set(gca, 'Zdir', 'reverse');
+%%  set(gca, 'FontSize', fontSize);
+%%  set(gcf, 'pos', positionYBar);
+%%  view(0, 0);
+%%  if(saveFigures)
+%%  saveas(gcf, 'Example11_rays', 'epsc');
+%%  saveas(gcf, 'Example11_rays.fig');
+%%  end

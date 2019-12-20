@@ -2,13 +2,13 @@
 
 cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex02_simulation2D_homo;
 
-%close all;
-clear all;
+close all;
+%clear all;
 
-drawForward = 1;
-drawAdjoint = 1;
+drawForward = 0;
+drawAdjoint = 0;
 drawMix = 1;
-
+saveFigures = 1;
 
 
 %===============================================================================================================
@@ -18,7 +18,7 @@ drawMix = 1;
 %===============================================================================================================
 if(drawForward)
 
-load gridRT_impulse;
+%load gridRT_impulse;
 load signalRT;
 load sensor_data_kWave;
 
@@ -45,9 +45,10 @@ ylabel('y [mm]');
 view(2);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionYBar);
+if(saveFigures)
 saveas(gcf, 'Example02_initialPressure', 'png'); 
 saveas(gcf, 'Example02_initialPressure.fig'); 
-
+end
 
 %===============================================================================================================
 % SINOGRAM
@@ -58,7 +59,7 @@ dcol_neg = @(x) [x(:, 2:end) x(:, 1)];
 
 position     = [700 700 530 630];
 positionY    = [700 700 550 630];
-positionBar  = [700 700 600 630];
+positionBar  = [700 700 620 630];
 positionYBar = [700 700 620 630];
 set(0,'DefaultFigurePaperPositionMode','auto');
 
@@ -100,7 +101,7 @@ normKW = maxKW;
 signalKW_norm = sensor_data/normKW;
 % RT smooth
 maxRT = max(signalRT(:));
-normRT = maxRT;
+normRT = maxKW;
 signalRT_norm = signalRT/normRT;
 
 %========================================
@@ -110,53 +111,57 @@ fontSize = 16;
 % k-Wave
 figure;
 surf(1e6*kgrid.t_array, 1:nSources, signalKW_norm, 'EdgeColor', 'none');
-axis([0 40 1 nSources]);
+axis([0 25 1 nSources]);
 view(2);
 box on;
 %colorbar();
-caxis([-0.4 1]);
+caxis([-.4 1]);
 xlabel('t [\mus]');
 ylabel('Sensor');
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
+if(saveFigures)
 saveas(gcf, 'Example02_kWave_f2D.fig');
 saveas(gcf, 'Example02_kWave_f2D', 'png');
-
+end
 
 % RT smooth
 figure;
 surf(1e6*Rgrid.tForward, 1:nSources, signalRT_norm, 'EdgeColor', 'none');
-axis([0 40 1 nSources]);
+axis([0 25 1 nSources]);
 view(2);
 box on;
-caxis([-0.4 1]);
+caxis([-.4 1]);
+colorbar();
 xlabel('t [\mus]');
 %ylabel('Sensor');
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', position);
+set(gcf, 'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_RT_f2D.fig');
 saveas(gcf, 'Example02_RT_f2D', 'png');
+end
 
 %========================================
 % FIGURES - ERROR
 %========================================
 % Error 
-signal = dcol_neg(signalRT_norm);
-error_RT = signal - signalKW_norm;
+error_RT = signalRT_norm - signalKW_norm;
 figure;
 surf(1e6*Rgrid.tForward, 1:nSources, error_RT, 'EdgeColor', 'none');
-axis([0 40 1 nSources]);
+axis([0 25 1 nSources]);
 view(2);
 box on;
-caxis([-0.5 0.5]);
+caxis([-.2 .2]);
 colorbar();
 xlabel('t [\mus]');
 %ylabel('Sensor');
 set(gca,'FontSize',fontSize);
 set(gcf,'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_error_RT_f2D.fig');
 saveas(gcf, 'Example02_error_RT_f2D', 'png');
-
+end
 end
 
 %===============================================================================================================
@@ -175,7 +180,7 @@ load gridRT_impulse;
 %========================================
 axisGrid = [0 1e3*(Rgrid.Nx-1)*Rgrid.dx 0 1e3*(Rgrid.Ny-1)*Rgrid.dy];
 position     = [700 700 300 600];
-positionY    = [700 700 320 600];
+positionY    = [700 700 340 600];
 positionBar  = [700 700 363 600];
 positionYBar = [700 700 390 600];
 
@@ -186,12 +191,14 @@ set(0,'DefaultFigurePaperPositionMode','auto');
 % kWave Adjoint
 %========================================
 pixelAReverse = pressure_adjoint_kWave.p_final;
-pixelKWave = max(0, pixelAReverse/max(pixelAReverse(:)));
+normKW = max(pixelAReverse(:));
+pixelKW = pixelAReverse/normKW;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 %colorbar();
+caxis([-.1 1]);
 box on;
 xlabel('x [mm]');
 ylabel('y [mm]');
@@ -199,43 +206,43 @@ ylabel('y [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
+if(saveFigures)
 saveas(gcf, 'Example02_kWave_adjoint', 'png');
 saveas(gcf, 'Example02_kWave_adjoint.fig');
-
+end
 
 %========================================
 % RT 
 %========================================
 pixelAReverse = adjoint_RT;
-maxPixelRT = max(real(pixelAReverse(:)));
-pixelRT = max(0, real(pixelAReverse)/maxPixelRT);
+pixelRT = pixelAReverse/normKW;
 figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelRT', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
+caxis([-.1 1]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_RT_adjoint', 'png');
 saveas(gcf, 'Example02_RT_adjoint.fig');
-
+end
 
 %========================================
 % Error
 %========================================
-adjointKW_norm = max(0, pressure_adjoint_kWave.p_final/max(pressure_adjoint_kWave.p_final(:)));
-adjointRT_norm = max(0, adjoint_RT/max(adjoint_RT(:)));
-pixel = adjointKW_norm - adjointRT_norm;
+pixel = pixelKW - pixelRT;
 figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixel', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
-caxis([-.5 .5]);
+caxis([-.2 .2]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
@@ -243,9 +250,10 @@ xlabel('x [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_error_RT', 'png');
 saveas(gcf, 'Example02_error_RT.fig');
-
+end
 end
 
 
@@ -264,7 +272,7 @@ load adjointRTForward_kWave;
 %========================================
 axisGrid = [0 1e3*(Rgrid.Nx-1)*Rgrid.dx 0 1e3*(Rgrid.Ny-1)*Rgrid.dy];
 position     = [700 700 300 600];
-positionY    = [700 700 320 600];
+positionY    = [700 700 340 600];
 positionBar  = [700 700 363 600];
 positionYBar = [700 700 390 600];
 
@@ -275,9 +283,10 @@ set(0,'DefaultFigurePaperPositionMode','auto');
 % kWave Adjoint - RT data
 %========================================
 pixelAReverse = real(adjointRTForward_kWave.p_final);
-pixelKWave = max(0, pixelAReverse/max(pixelAReverse(:)));
+normKW = max(pixelAReverse(:));
+pixelKW = pixelAReverse/normKW;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 %colorbar();
@@ -288,16 +297,17 @@ ylabel('y [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
+if(saveFigures)
 saveas(gcf, 'Example02_kWave_adjoint_RT_data', 'png');
 saveas(gcf, 'Example02_kWave_adjoint_RT_data.fig');
-
+end
 %========================================
 % RT Adjoint - kWave data
 %========================================
 pixelAReverse = real(adjointKWaveForward_RT);
-pixelKWave = max(0, pixelAReverse/max(pixelAReverse(:)));
+pixelRT = pixelAReverse/normKW;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelRT', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
@@ -308,21 +318,20 @@ xlabel('x [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_RT_adjoint_kWave_data', 'png');
 saveas(gcf, 'Example02_RT_adjoint_kWave_data.fig');
-
+end
 %========================================
 % Error mix kWave Forward - RT recon
 %========================================
-adjointKW = max(0, pressure_adjoint_kWave.p_final/max(pressure_adjoint_kWave.p_final(:)));
-adjointRT = max(0, real(adjointKWaveForward_RT)/max(real(adjointKWaveForward_RT(:))));
-pixelKWave = adjointKW - adjointRT;
+errorKW = pixelKW - pixelRT;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKWave', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, errorKW', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
-caxis([-.5 .5]);
+caxis([-.2 .2]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
@@ -330,9 +339,10 @@ xlabel('x [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+if(saveFigures)
 saveas(gcf, 'Example02_mix_error_RT', 'png');
 saveas(gcf, 'Example02_mix_error_RT.fig');
-
+end
 
 end
 

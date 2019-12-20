@@ -1,5 +1,5 @@
 
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex06_basic2D;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex06_forward2D;
 
 close all;
 %clear all;
@@ -7,7 +7,7 @@ close all;
 load sensor_data.mat;
 
 saveFigures = 0;
-  
+loadData = 0;
 %==================================================================================
 % Plot results
 %==================================================================================
@@ -25,7 +25,9 @@ scaleFactor = 1e6;
 %==============================
 % kWave and RT
 %==============================
+if(loadData)
 load sensor_data_RT_8e-9;
+end
 % Norms
 normKWave = max(sensor_data_low(1, :));
 normRT = normKWave;
@@ -59,7 +61,9 @@ end
 % ERROR PLOT
 % kWave and RT
 %==============================
+if(loadData)
 load sensor_data_RT_8e-9;
+end
 t_array_dt1 = gridR.tForward;
 normKWave = normRT; %max(sensor_data_low(1, :));
 spline_low = spline(kgrid.t_array, sensor_data_low(1, :)/normKWave, gridR.tForward);
@@ -97,7 +101,9 @@ end
 % ERROR PLOT
 % kWave and RT
 %==============================
+if(loadData)
 load sensor_data_RT_4e-9;
+end
 t_array_dt2 = gridR.tForward;
 normKWave = max(sensor_data_low(1, :));
 normRT = normKWave; %
@@ -136,7 +142,9 @@ end
 % ERROR PLOT
 % kWave and RT
 %==============================
+if(loadData)
 load sensor_data_RT_2e-9;
+end
 t_array_dt3 = gridR.tForward;
 normKWave = max(sensor_data_low(1, :));
 normRT = normKWave;

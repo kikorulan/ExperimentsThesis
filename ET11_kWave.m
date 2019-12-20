@@ -82,10 +82,10 @@ sensor.mask(1, floor(Ny/2), floor(Nz/2)) = 1;
 input_args = {'PMLSize', 40, 'PMLInside', false, 'PlotPML', false, 'Smooth', false};
 
 % Save to disk
-%kspaceFirstOrder3D(kgrid, medium, source_low, sensor, input_args{:}, 'SaveToDisk', 'Example11_forward_input_low.h5');
+kspaceFirstOrder3D(kgrid, medium, source_low, sensor, input_args{:}, 'SaveToDisk', 'Example11_forward_input_low.h5');
 kspaceFirstOrder3D(kgrid, medium, source_mid, sensor, input_args{:}, 'SaveToDisk', 'Example11_forward_input_mid.h5');
 kspaceFirstOrder3D(kgrid, medium, source_high, sensor, input_args{:}, 'SaveToDisk', 'Example11_forward_input_high.h5');
-%system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example11_forward_input_low.h5 -o Example11_forward_output_low.h5');
+system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example11_forward_input_low.h5 -o Example11_forward_output_low.h5');
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example11_forward_input_mid.h5 -o Example11_forward_output_mid.h5');
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example11_forward_input_high.h5 -o Example11_forward_output_high.h5');
 

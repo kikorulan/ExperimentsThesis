@@ -25,7 +25,7 @@ source_adjoint.p_mask(1, :) = 1;
 source_adjoint.p_mask(end, :) = 1;
 source_adjoint.p_mask(:, 1) = 1;
 source_adjoint.p_mask(:, end) = 1;
-source_adjoint.p = fliplr(sensor_data);
+source_adjoint.p = fliplr(sensor_data_RT);
 p0_recon_adjoint = kspaceFirstOrder2D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:});
 
 %================================================================================

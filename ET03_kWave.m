@@ -11,8 +11,8 @@ close all;
 % create the computational grid
 Nx = 128;           % number of grid points in the x (row) direction
 Ny = 256;           % number of grid points in the y (column) direction
-dx = 2e-4;        % grid point spacing in the x direction [m]
-dy = 2e-4;        % grid point spacing in the y direction [m]
+dx = 1e-4;        % grid point spacing in the x direction [m]
+dy = 1e-4;        % grid point spacing in the y direction [m]
 kgrid = makeGrid(Nx, dx, Ny, dy);
 
 %==============================
@@ -31,8 +31,8 @@ medium.sound_speed = c0*(ones(Nx, Ny) + factor*p/max(p(:)));
 medium.density = 1;
     
 % compute time
-dt = 5e-8;
-tMax = 4e-5;
+dt = 1e-8;
+tMax = 2.5e-5;
 kgrid.t_array = 0:dt:tMax;
 %[kgrid.t_array, dt] = makeTime(kgrid, medium.sound_speed);
 
@@ -68,6 +68,8 @@ save sensor_data_kWave.mat kgrid sensor sourceKW medium sensor_data input_args;
 %==============================
 sensor_adjoint.mask = ones(kgrid.Nx, kgrid.Ny);
 sensor_adjoint.record = {'p_final'};
+
+% Multiple sensors
 source_adjoint.p_mask = zeros(kgrid.Nx, kgrid.Ny);
 source_adjoint.p_mask(1, :) = 1;
 source_adjoint.p_mask(end, :) = 1;
@@ -76,5 +78,17 @@ source_adjoint.p_mask(:, end) = 1;
 source_adjoint.p = fliplr(sensor_data);
 pressure_adjoint_kWave = kspaceFirstOrder2D(kgrid, medium, source_adjoint, sensor_adjoint, input_args{:});
 
+% Sensor 1
+source_adjoint_1.p_mask = zeros(kgrid.Nx, kgrid.Ny);
+source_adjoint_1.p_mask(1, 1) = 1;
+source_adjoint_1.p = fliplr(sensor_data(1, :));
+pressure_adjoint_kWave_1 = kspaceFirstOrder2D(kgrid, medium, source_adjoint_1, sensor_adjoint, input_args{:});
+
+% Sensor 2
+source_adjoint_2.p_mask = zeros(kgrid.Nx, kgrid.Ny);
+source_adjoint_2.p_mask(end, floor(Ny/2)) = 1;
+source_adjoint_2.p = fliplr(sensor_data(Nx + 2*(floor(Ny/2)-1), :));
+pressure_adjoint_kWave_2 = kspaceFirstOrder2D(kgrid, medium, source_adjoint_2, sensor_adjoint, input_args{:});
+
 % Save data
-save adjoint_kWave.mat kgrid medium source_adjoint sensor_adjoint pressure_adjoint_kWave input_args;
+save adjoint_kWave.mat kgrid medium source_adjoint sensor_adjoint pressure_adjoint_kWave pressure_adjoint_kWave_1 pressure_adjoint_kWave_2 input_args;

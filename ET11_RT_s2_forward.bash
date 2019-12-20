@@ -39,7 +39,7 @@ tMax=2e-5
 
 zPos=$(echo "scale=6;($dz*($Nz-2))/2" | bc)
 yPos=$(echo "scale=6;($dy*($Ny-2))/2" | bc)
-
+xPos=$(echo "scale=6;($dz*($Nx-1))" | bc)
 #==============================
 # SENSORS
 #==============================
@@ -47,16 +47,13 @@ dt=4e-8
 echo "==================================== dt = 4e-8 ========================================="
 # SENSORS LOW
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_LOW
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5 0.5 1.0 2.2" >> $SENSORS_LOW
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.64 3.64 1.0 2.2" >> $SENSORS_LOW
 # SENSORS MID
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_MID
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0000 2.2000" >> $SENSORS_HIGH
 #====================
 # RUN 
 #====================
@@ -80,16 +77,13 @@ dt=2e-8
 echo "==================================== dt = 2e-8 ========================================="
 # SENSORS LOW
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_LOW
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5 0.5 1.0 2.2" >> $SENSORS_LOW
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.64 3.64 1.0 2.2" >> $SENSORS_LOW
 # SENSORS MID
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_MID
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0000 2.2000" >> $SENSORS_HIGH
 #====================
 # RUN 
 #====================
@@ -109,20 +103,17 @@ mv $OUTPUT_FOLDER"/ForwardSignal.dat" forwardSignal_RT_high_$dt.dat
 #==============================
 # SENSORS
 #==============================
-dt=1e-8
+dt=5e-9
 echo "==================================== dt = 1e-8 ========================================="
 # SENSORS LOW
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_LOW
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5 0.5 1.0 2.2" >> $SENSORS_LOW
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.64 3.64 1.0 2.2" >> $SENSORS_LOW
 # SENSORS MID
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_MID
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6 0.6 1.0 2.2" >> $SENSORS_MID
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0 2.2" >> $SENSORS_MID
 # SENSORS HIGH
 echo "$dt $tMax 0 0 0 0 0 0 0" > $SENSORS_HIGH
-echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0000 2.2000" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.5995 0.6000 1.0005 2.2005" >> $SENSORS_HIGH
-#echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -0.6000 0.6005 1.0005 2.2005" >> $SENSORS_HIGH
+echo "$xPos $yPos $zPos $nRaysPhi $nRaysTheta 2.54 3.74 1.0000 2.2000" >> $SENSORS_HIGH
 #====================
 # RUN 
 #====================

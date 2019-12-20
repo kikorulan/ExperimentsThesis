@@ -7,24 +7,24 @@ close all;
 %=========================================================================
 % DOMAIN DEFINITION
 %=========================================================================
-Nx = 256;           % number of grid points in the x (row) direction
-Ny = 128;           % number of grid points in the y (column) direction
-Nz = 128;           % number of grid points in the y (column) direction
-dx = 1e-4;        % grid point spacing in the x direction [m]
-dy = 1e-4;        % grid point spacing in the y direction [m]
-dz = 1e-4;        % grid point spacing in the y direction [m]
+Nx = 512;           % number of grid points in the x (row) direction
+Ny = 256;           % number of grid points in the y (column) direction
+Nz = 256;           % number of grid points in the y (column) direction
+dx = 5e-5;        % grid point spacing in the x direction [m]
+dy = 5e-5;        % grid point spacing in the y direction [m]
+dz = 5e-5;        % grid point spacing in the y direction [m]
 kgrid = makeGrid(Nx, dx, Ny, dy, Nz, dz);
 
 %==============================
 % define the properties of the propagation medium
 %==============================
-c0 = 1600;
+c0 = 1500;
 c = c0*ones(Nx, Ny, Nz);
 % Load sound speed
 medium.sound_speed = c;
 medium.density = 1;
 c_matrix  = cube2matrix(c);
-dlmwrite('sound_speed_1600.dat', c_matrix, 'delimiter', ' ');
+dlmwrite('sound_speed_1500_512.dat', c_matrix, 'delimiter', ' ');
 
 % compute time
 dt = 2e-8;
@@ -45,9 +45,9 @@ u0_high  = exp(-S3/sigma/sigma);
 u0_low_matrix  = cube2matrix(u0_low);
 u0_mid_matrix  = cube2matrix(u0_mid);
 u0_high_matrix = cube2matrix(u0_high);
-dlmwrite('u0_low_256.dat', u0_low_matrix, 'delimiter', ' ');
-dlmwrite('u0_mid_256.dat', u0_mid_matrix, 'delimiter', ' ');
-dlmwrite('u0_high_256.dat', u0_high_matrix, 'delimiter', ' ');
+dlmwrite('u0_low_512.dat', u0_low_matrix, 'delimiter', ' ');
+dlmwrite('u0_mid_512.dat', u0_mid_matrix, 'delimiter', ' ');
+dlmwrite('u0_high_512.dat', u0_high_matrix, 'delimiter', ' ');
 plot_projection(u0_low + u0_mid + u0_high, dx);
 
 % Sources
@@ -79,6 +79,7 @@ kspaceFirstOrder3D(kgrid, medium, source_high, sensor, input_args{:}, 'SaveToDis
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example10_forward_input_low.h5 -o Example10_forward_output_low.h5');
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example10_forward_input_mid.h5 -o Example10_forward_output_mid.h5');
 system('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Examples/kspaceFirstOrder3D-OMP -i Example10_forward_input_high.h5 -o Example10_forward_output_high.h5');
+
 
 %=========================================================================
 % EXTRACT TO RAY TRACING FORMAT
