@@ -41,7 +41,7 @@ export DIMENSIONS="dimensions.dat"
 export SOUND_SPEED="sound_speed.dat"
 export INITIAL_PRESSURE="initial_pressure_veins_80x240x240_smooth.dat"
 export SENSORS="sensors_subsampled_14k.dat" 
-export FORWARD_SIGNAL="forwardSignal_RT.dat"
+export FORWARD_SIGNAL="forwardSignal_kWave_100.dat"
 export STDOUT="stdout-adjoint-kWave.txt"
 
 # Mode
@@ -59,24 +59,26 @@ EOF
 #==============================
 # SENSORS
 #==============================
-##  nRaysPhi=1024 
-##  nRaysTheta=1024
-##  dt=1.6667e-8
-##  tMax=8.0836e-06
-##  
-##  # Step and tMax
-##  echo "$dt $tMax 0 0 0 0 0 0 0" >> $INPUT_FOLDER$SENSORS
-##  
-##  sensors_z=120
-##  sensors_y=120
-##  # YZ
-##  for ((k=0; k<sensors_z; k++)); do
-##      zPos=$(echo "scale=6;($k*$dz*($Nz-1))/($sensors_z-1)" | bc)
-##      for ((i=0; i<sensors_y; i++)); do
-##          yPos=$(echo "scale=6;($i*$dy*($Ny-1))/($sensors_y-1)" | bc)
-##          echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -1.57 1.57 0.04 3.1" >> $INPUT_FOLDER$SENSORS
-##      done 
-##  done 
+nRaysPhi=1024 
+nRaysTheta=1024
+dt=1.6667e-8
+tMax=8.0836e-06
+
+# Step and tMax
+echo "$dt $tMax 0 0 0 0 0 0 0" > $INPUT_FOLDER$SENSORS
+
+subsampleFactor=2
+sensors_y=$(echo "scale=0;($Ny/$subsampleFactor)" | bc)
+sensors_z=$(echo "scale=0;($Nz/$subsampleFactor)" | bc)
+echo $sensors_y $sensors_z
+# YZ
+for ((k=0; k<$sensors_z; k++)); do
+    zPos=$(echo "scale=12;($k*$dz*$subsampleFactor)" | bc)
+    for ((i=0; i<$sensors_y; i++)); do
+        yPos=$(echo "scale=12;($i*$dy*$subsampleFactor)" | bc)
+        echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -1.57 1.57 0.04 3.1" >> $INPUT_FOLDER$SENSORS
+    done 
+done 
 
 ##=============== ALL SIDES ============
 ##  # XY Bottom
@@ -127,4 +129,7 @@ EOF
 # RUN 
 #====================
 RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
-             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL > $OUTPUT_FOLDER$STDOUT
+             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL
+# > $OUTPUT_FOLDER$STDOUT
+mv $OUTPUT_FOLDER"ForwardSignal.dat" $INPUT_FOLDER"forwardSignal_RT.dat"
+mv $OUTPUT_FOLDER"PixelPressure.dat" $OUTPUT_FOLDER"pressure_adjoint_RT.dat"
