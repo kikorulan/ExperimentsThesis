@@ -7,7 +7,7 @@
 #$ -l gpu=true
 #$ -l h_rt=100:00:00
 #$ -l tmem=3G
-#$ -N ET05_adjoint
+#$ -N ET05_adjoint_RT
 #$ -S /bin/bash
 
 #$ -o RTsolver.txt
@@ -42,7 +42,7 @@ export SOUND_SPEED="sound_speed.dat"
 export INITIAL_PRESSURE="initial_pressure_veins_80x240x240_smooth.dat"
 export SENSORS="sensors_subsampled_14k.dat" 
 export FORWARD_SIGNAL="forwardSignal_RT.dat"
-export STDOUT="stdout-adjoint.txt"
+export STDOUT="stdout-adjoint-RT.txt"
 
 # Mode
 export MODE="-a"
@@ -59,26 +59,26 @@ EOF
 #==============================
 # SENSORS
 #==============================
-nRaysPhi=1024 
-nRaysTheta=1024
-dt=1.667e-8
-tMax=8.0836e-06
-
-# Step and tMax
-echo "$dt $tMax 0 0 0 0 0 0 0" > $INPUT_FOLDER$SENSORS
-
-subsampleFactor=2
-sensors_y=$(echo "scale=0;($Ny/$subsampleFactor)" | bc)
-sensors_z=$(echo "scale=0;($Nz/$subsampleFactor)" | bc)
-echo $sensors_y $sensors_z
-# YZ
-for ((k=0; k<$sensors_z; k++)); do
-    zPos=$(echo "scale=12;($k*$dz*$subsampleFactor)" | bc)
-    for ((i=0; i<$sensors_y; i++)); do
-        yPos=$(echo "scale=12;($i*$dy*$subsampleFactor)" | bc)
-        echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -1.57 1.57 0.04 3.1" >> $INPUT_FOLDER$SENSORS
-    done 
-done 
+##  nRaysPhi=1024 
+##  nRaysTheta=1024
+##  dt=1.667e-8
+##  tMax=8.0836e-06
+##  
+##  # Step and tMax
+##  echo "$dt $tMax 0 0 0 0 0 0 0" > $INPUT_FOLDER$SENSORS
+##  
+##  subsampleFactor=2
+##  sensors_y=$(echo "scale=0;($Ny/$subsampleFactor)" | bc)
+##  sensors_z=$(echo "scale=0;($Nz/$subsampleFactor)" | bc)
+##  echo $sensors_y $sensors_z
+##  # YZ
+##  for ((k=0; k<$sensors_z; k++)); do
+##      zPos=$(echo "scale=12;($k*$dz*$subsampleFactor)" | bc)
+##      for ((i=0; i<$sensors_y; i++)); do
+##          yPos=$(echo "scale=12;($i*$dy*$subsampleFactor)" | bc)
+##          echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -1.57 1.57 0.04 3.1" >> $INPUT_FOLDER$SENSORS
+##      done 
+##  done 
 
 ##=============== ALL SIDES ============
 ##  # XY Bottom
