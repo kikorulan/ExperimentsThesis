@@ -7,8 +7,8 @@ close all;
 runForward        = 0;
 runForward_100    = 0;
 runAdjoint        = 0;
-runAdjoint_100    = 1;
-runAdjoint_RTData = 0;
+runAdjoint_100    = 0;
+runAdjoint_RTData = 1;
 saveData          = 0;
 %=========================================================================
 % DOMAIN DEFINITION
@@ -32,7 +32,7 @@ medium.density = 1;
 
 % compute time
 dt = 1.667e-8;
-Nt = 486;
+Nt = 485;
 tMax = dt*(Nt-1);
 kgrid.t_array = 0:dt:tMax;
 
@@ -107,6 +107,10 @@ end
 % Adjoint
 %==============================
 if(runAdjoint)
+% Define the sensors
+sensor.mask = zeros(Nx, Ny, Nz);
+sensor.mask(1, 1:2:end, 1:2:end)   = 1;
+
 % Read results
 sensor_data = h5read('./output_data/Example04_forward_output.h5', '/p');
 % Number of sensors
@@ -153,6 +157,10 @@ end
 % Adjoint - RT DATA
 %==============================
 if(runAdjoint_RTData)
+% Define the sensors
+sensor.mask = zeros(Nx, Ny, Nz);
+sensor.mask(1, 1:2:end, 1:2:end)   = 1;
+
 % Read results
 sensor_data_RT = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
 sensor_data_RT = sensor_data_RT(2:end, :);

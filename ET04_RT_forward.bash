@@ -73,9 +73,9 @@ sensors_z=$(echo "scale=0;($Nz/$subsampleFactor)" | bc)
 echo $sensors_y $sensors_z
 # YZ
 for ((k=0; k<$sensors_z; k++)); do
-    zPos=$(echo "scale=12;($k*$dz*$subsampleFactor)" | bc)
+    zPos=$(echo "scale=8;($k*$dz*$subsampleFactor)" | bc)
     for ((i=0; i<$sensors_y; i++)); do
-        yPos=$(echo "scale=12;($i*$dy*$subsampleFactor)" | bc)
+        yPos=$(echo "scale=8;($i*$dy*$subsampleFactor)" | bc)
         echo "0 $yPos $zPos $nRaysPhi $nRaysTheta -1.57 1.57 0.04 3.1" >> $INPUT_FOLDER$SENSORS
     done 
 done 
@@ -128,8 +128,8 @@ done
 #====================
 # RUN 
 #====================
-RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
-             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL
-# > $OUTPUT_FOLDER$STDOUT
-mv $OUTPUT_FOLDER"ForwardSignal.dat" $INPUT_FOLDER"forwardSignal_RT.dat"
-mv $OUTPUT_FOLDER"PixelPressure.dat" $OUTPUT_FOLDER"pressure_adjoint_RT.dat"
+#RTsolver_GPU $MODE $INPUT_FOLDER$DIMENSIONS $INPUT_FOLDER$SOUND_SPEED $INPUT_FOLDER$INITIAL_PRESSURE \
+#             $INPUT_FOLDER$SENSORS $OUTPUT_FOLDER $INPUT_FOLDER$FORWARD_SIGNAL
+## > $OUTPUT_FOLDER$STDOUT
+#mv $OUTPUT_FOLDER"ForwardSignal.dat" $INPUT_FOLDER"forwardSignal_RT.dat"
+#mv $OUTPUT_FOLDER"PixelPressure.dat" $OUTPUT_FOLDER"pressure_adjoint_RT.dat"

@@ -3,6 +3,8 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 clear all;
 close all;
 
+saveFigures = 1;
+fontSize = 14;
 %==================================================
 % Dimensions
 %==================================================
@@ -21,43 +23,112 @@ sensor_data_kWave = importdata(['./input_data/forwardSignal_kWave.dat'], ' ', 0)
 sensor_data_RT    = importdata(['./input_data/forwardSignal_RT.dat'], ' ', 0);
 
 % Pressure
-pressure_adjoint_kWave_matrix        = importdata(['./output_data/pressure_adjoint_kWave.dat'], ' ', 0);
-pressure_adjoint_kWave_RTdata_matrix = importdata(['./output_data/pressure_adjoint_kWave_RTdata.dat'], ' ', 0);
-pressure_adjoint_RT_matrix           = importdata(['./output_data/pressure_adjoint_RT.dat'], ' ', 0);
-pressure_adjoint_RT_kWaveData_matrix = importdata(['./output_data/pressure_adjoint_RT_kWaveData.dat'], ' ', 0);
+pressure_adjoint_kWave_matrix         = importdata(['./output_data/pressure_adjoint_kWave.dat'], ' ', 0);
+pressure_adjoint_kWave_RT_data_matrix = importdata(['./output_data/pressure_adjoint_kWave_RT_data.dat'], ' ', 0);
+pressure_adjoint_RT_matrix            = importdata(['./output_data/pressure_adjoint_RT.dat'], ' ', 0);
+pressure_adjoint_RT_kWave_data_matrix = importdata(['./output_data/pressure_adjoint_RT_kWave_data.dat'], ' ', 0);
 
 %========================================================================================================================
 % INITIAL PRESSURE AND FORWARD SIGNAL
 %========================================================================================================================
-% Initial Pressure
-u0 = matrix2cube(u0Matrix, Nz);
-plot_projection_compact(u0, dx);
+position     = [700 700 530 630];
+positionY    = [700 700 550 630];
+positionBar  = [700 700 620 630];
+positionYBar = [700 700 620 630];
 
 % kWave
 figure;
-imagesc(sensor_data_kWave(2:81, :));
-colorbar();
+surf(1e6*sensor_data_RT(1, :), 1:120, sensor_data_kWave(2:121, :), 'EdgeColor', 'none');
+view(2);
+box on;
+axis tight;
+xlabel('t [\mus]');
+ylabel('Sensor');
+caxis([-0.073 0.073])
+set(gca,'FontSize',16);
+set(gcf, 'pos', positionY);
+if saveFigures
+    saveas(gcf, 'Example05_kWave_f2D', 'png');
+    saveas(gcf, 'Example05_kWave_f2D.fig');
+end
 
 % RT
 figure;
-imagesc(sensor_data_RT(2:81, :));
+surf(1e6*sensor_data_RT(1, :), 1:120, sensor_data_RT(2:121, :), 'EdgeColor', 'none');
+view(2);
+box on;
+axis tight;
+xlabel('t [\mus]');
+caxis([-0.073 0.073])
 colorbar();
+set(gca,'FontSize',16);
+set(gcf, 'pos', positionBar);
+if saveFigures
+    saveas(gcf, 'Example05_RT_f2D', 'png');
+    saveas(gcf, 'Example05_RT_f2D.fig');
+end
+
+
+% RT
+figure;
+surf(1e6*sensor_data_RT(1, :), 1:120, sensor_data_RT(2:121, :) - sensor_data_kWave(2:121, :), 'EdgeColor', 'none');
+view(2);
+box on;
+axis tight;
+xlabel('t [\mus]');
+caxis([-0.0146 0.0146])
+colorbar();
+set(gca,'FontSize',16);
+set(gcf, 'pos', positionBar);
+if saveFigures
+    saveas(gcf, 'Example05_error_RT_f2D', 'png');
+    saveas(gcf, 'Example05_error_RT_f2D.fig');
+end
+
+
+ERT = sum(sensor_data_RT(:).^2)
+EKW = sum(sensor_data_kWave(:).^2)
 
 %========================================================================================================================
 % ADJOINT PRESSURE
 %========================================================================================================================
+param.dx = dx;
+param.lim = true;
+param.cMin = 0;
+param.cMax = 0.2;
+param.fontSize = fontSize;
 % Adjoint kWave
+param.cb = false;
 pressure_adjoint_kWave = matrix2cube(pressure_adjoint_kWave_matrix, Nz);
-plot_projection_compact(pressure_adjoint_kWave, dx);
-
+plot_projection_compact(pressure_adjoint_kWave, param);
+if saveFigures
+    saveas(gcf, 'Example05_kWave_adjoint', 'png');
+    saveas(gcf, 'Example05_kWave_adjoint.fig');
+end
 % Adjoint RT
+param.cb = true;
 pressure_adjoint_RT = matrix2cube(pressure_adjoint_RT_matrix, Nz);
-plot_projection_compact(pressure_adjoint_RT, dx);
-
+plot_projection_compact(pressure_adjoint_RT, param);
+if saveFigures
+    saveas(gcf, 'Example05_RT_adjoint', 'png');
+    saveas(gcf, 'Example05_RT_adjoint.fig');
+end
 % Adjoint kWave - RT data
-pressure_adjoint_kWave_RTdata = matrix2cube(pressure_adjoint_kWave_RTdata_matrix, Nz);
-plot_projection_compact(pressure_adjoint_kWave_RTdata, dx);
-
+param.cb = false;
+pressure_adjoint_kWave_RTdata = matrix2cube(pressure_adjoint_kWave_RT_data_matrix, Nz);
+plot_projection_compact(pressure_adjoint_kWave_RTdata, param);
+if saveFigures
+    saveas(gcf, 'Example05_kWave_adjoint_RT_data', 'png');
+    saveas(gcf, 'Example05_kWave_adjoint_RT_data.fig');
+end
 % Adjoint RT - kWave data
-pressure_adjoint_RT_kWaveData = matrix2cube(pressure_adjoint_RT_kWaveData_matrix, Nz);
-plot_projection_compact(pressure_adjoint_RT_kWaveData, dx);
+param.cb = true;
+pressure_adjoint_RT_kWaveData = matrix2cube(pressure_adjoint_RT_kWave_data_matrix, Nz);
+plot_projection_compact(pressure_adjoint_RT_kWaveData, param);
+if saveFigures
+    saveas(gcf, 'Example05_RT_adjoint_kWave_data', 'png');
+    saveas(gcf, 'Example05_RT_adjoint_kWave_data.fig');
+end
+
+EKW = sum(pressure_adjoint_kWave(:).^2)
+ERT = sum(pressure_adjoint_RT_kWaveData(:).^2)

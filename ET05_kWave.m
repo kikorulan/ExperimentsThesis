@@ -6,8 +6,8 @@ close all;
 
 runForward = 1;
 runAdjoint = 1;
-runAdjoint_RTData = 0;
-saveData = 0;
+runAdjoint_RTData = 1;
+saveData = 1;
 %=========================================================================
 % DOMAIN DEFINITION
 %=========================================================================
@@ -49,7 +49,7 @@ medium.density = 1;
 
 % compute time
 dt = 1.667e-8;
-Nt = 486;
+Nt = 485;
 tMax = dt*(Nt-1);
 kgrid.t_array = 0:dt:tMax;
 
