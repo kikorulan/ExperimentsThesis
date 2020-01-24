@@ -20,7 +20,7 @@ cd $EXAMPLE_FOLDER
 
 # Assign files
 export DIMENSIONS="dimensions.dat"
-export SENSORS="sensors_subsampled_3600.dat" 
+export SENSORS="sensors_subsampled_14400.dat" 
 
 #==============================
 # DIMENSIONS
@@ -45,7 +45,7 @@ tMax=8.0836e-06
 # Step and tMax
 echo "$dt $tMax 0 0 0 0 0 0 0" > $INPUT_FOLDER$SENSORS
 
-subsampleFactor=4
+subsampleFactor=2
 sensors_y=$(echo "scale=0;($Ny/$subsampleFactor)" | bc)
 sensors_z=$(echo "scale=0;($Nz/$subsampleFactor)" | bc)
 echo $sensors_y $sensors_z

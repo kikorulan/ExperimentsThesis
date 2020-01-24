@@ -1,9 +1,9 @@
 % Read data from files
-%cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex14_synth_recon3D_homo;
-cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex14_synth_recon3D_homo;
+%cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex16_real_recon3D_DS1;
+cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex16_real_recon3D_DS1;
 
 clear all;
- close all;
+close all;
 
 % Functions
 [TV, D, DTV] = TVOperators(3, 'none');
@@ -24,60 +24,61 @@ Nz = dim(1, 3); dz = dim(2, 3);
 %========================================================================================================================
 % ITERATIVE RECONSTRUCTION
 %========================================================================================================================
-% Objective value of function
-OBJ_VAL = 9.688;
+OBJ_VAL = 13.260;
 rel_distance = @(curve, iter) (curve(iter) - OBJ_VAL)/(curve(1) - OBJ_VAL);
 rel_error    = @(vect) (vect(1:end-1)-vect(2:end))./vect(2:end);
+
 % LOAD DATA
-load ./results/error_vectors/GD_error_lambda1em3;
-load ./results/error_vectors/SGD_error_lambda1em3_batch1800;
-load ./results/error_vectors/FISTA_error_lambda1em3;
-load ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1;
-load ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100;
+load ./results/error_vectors/GD_error_lambda1em4;
+load ./results/error_vectors/SGD_error_lambda1em4_batch1800;
+load ./results/error_vectors/FISTA_error_lambda1em4;
+load ./results/error_vectors/PDHG_error_lambda1em4_sigma5em1;
+load ./results/error_vectors/SPDHG_error_lambda1em4_sigma5em1_batch100;
 
 % Save results
 saveResults = 0;
 
-% Plot INPUT
+% Plot Input
 plot_input = 0;
 
 % Choose index
-GD.plotIndex    = 1;
-SGD.plotIndex   = 2;
-FISTA.plotIndex = 1;
-PDHG.plotIndex  = 1;
-SPDHG.plotIndex = 2;
+GD.plotIndex    = 3;
+SGD.plotIndex   = 1;
+FISTA.plotIndex = 2;
+PDHG.plotIndex  = 2;
+SPDHG.plotIndex = 1;
 
 % Choose subiter
-GD.subiter    = 58;
-SGD.subiter   = 100;
-FISTA.subiter = 47;
-PDHG.subiter  = 100;
-SPDHG.subiter = 27;
-lim_iter = 1;
+GD.subiter    = 24;
+SGD.subiter   = 30;
+FISTA.subiter = 30;
+PDHG.subiter  = 27;
+SPDHG.subiter = 30;
+lim_iter = 0;
 
 % Reconstruction plots
 plot_reconGD    = 0;
 plot_reconSGD   = 0;
 plot_reconFISTA = 0;
-plot_reconPDHG  = 1;
+plot_reconPDHG  = 0;
 plot_reconSPDHG = 0;
 
 % Auxiliary plots
 plot_auxGD    = 0;
-plot_auxSGD   = 0;
+plot_auxSGD   = 1;
 plot_auxFISTA = 0;
 plot_auxPDHG  = 0;
 plot_auxSPDHG = 0;
 
 % Converge plots
-plot_PSNR    = 1;
-plot_primalE = 1;
-plot_dualE   = 1;
-plot_relDE   = 1;
-plot_dataE   = 1;
-plot_regE    = 1; 
-plot_relObj  = 1;
+plot_PSNR    = 0;
+plot_primalE = 0;
+plot_dualE   = 0;
+plot_relDE   = 0;
+plot_dataE   = 0;
+plot_regE    = 0;
+plot_relObj  = 0;
+
 
 %========================================================================================================================
 % PRIMAL AND DUAL DATA
@@ -85,34 +86,41 @@ plot_relObj  = 1;
 param.dx = dx;
 
 % Forward signal - full data
-%%  time_signal = importdata(['./input_data/forwardSignal_reference_14400sensors.dat'], ' ', 0);
-%%  y0 = time_signal(2:end, :);
+time_signal = importdata(['./input_data/forwardSignal_reference_14400sensors_490timesteps.dat'], ' ', 0);
+y0 = time_signal(2:end, :);
 
 % Forward signal - subsampled
-time_signal = importdata(['./input_data/forwardSignal_reference_noisy5_3600sensors.dat'], ' ', 0);
+time_signal = importdata(['./input_data/forwardSignal_random_3600sensors_490timesteps.dat'], ' ', 0);
 t_array = 1e6*time_signal(1, :);
 y0 = time_signal(2:end, :);
 if(plot_input)
 figure;
 imagesc(y0(1:60, :));
-xticklabels = 0:2:8;
-xticks = linspace(1, find(t_array > 8, 1), numel(xticklabels));
+xticklabels = 0:1.5:6;
+xticks = linspace(1, find(t_array > 6, 1), numel(xticklabels));
 set(gca, 'XTick', xticks, 'XTickLabel', xticklabels)
 colorbar();
 set(gca,'FontSize',15);
 xlabel('t [\mus]')
 if(saveResults)
-saveas(gcf, './figures/ET14_forwardSignal_noisy5', 'epsc');
+saveas(gcf, './figures/ET16_forwardSignal', 'epsc');
 end
 end
+%%  % Load Sensor mask
+%%  load input_data/sensor_mask.mat
+%%  figure;
+%%  imagesc(sensor_mask);
+%%  if(saveResults)
+%%      saveas(gcf, './figures/ET16_sensorMask', 'epsc');
+%%  end
 
-% Load Initial pressure
+% Load Recon Full data
 if(plot_input)
-pressure_adjoint = importdata('./input_data/initial_pressure_veins_80x240x240.dat', ' ', 0);
+pressure_adjoint = importdata('./results_lambda5e-5/full_data/adjoint/FB/pixelPressure_GD_tau5e-1_lambda5e-5_iter100.dat', ' ', 0);
 pressure_adjoint = matrix2cube(pressure_adjoint, Nz);
 plot_projection_compact(pressure_adjoint, param);
 if(saveResults)
-saveas(gcf, './figures/ET14_initialPressure', 'epsc');
+saveas(gcf, './figures/ET16_reconFull_GD', 'epsc');
 end
 end
 
@@ -122,9 +130,10 @@ pressure_adjoint = importdata('./input_data/pressure_adjoint_RT.dat', ' ', 0);
 pressure_adjoint = matrix2cube(pressure_adjoint, Nz);
 plot_projection_compact(pressure_adjoint, param);
 if(saveResults)
-saveas(gcf, './figures/ET14_pixelPressure_adjoint', 'epsc');
+saveas(gcf, './figures/ET16_pixelPressure_adjoint', 'epsc');
 end
 end
+
 
 %========================================================================================================================
 % RECONSTRUCTION PLOTS
@@ -136,7 +145,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/FB/pixelPressure_GD_tau', G
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_GD'], 'epsc');
+    saveas(gcf, ['./figures/ET16_GD'], 'epsc');
 end
 end
 
@@ -146,7 +155,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SFB/pixelPressure_S-GD_tau'
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_S-GD'], 'epsc');
+    saveas(gcf, ['./figures/ET16_S-GD'], 'epsc');
 end
 end
 
@@ -156,7 +165,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/AFB/pixelPressure_FISTA_tau
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_FISTA'], 'epsc');
+    saveas(gcf, ['./figures/ET16_FISTA'], 'epsc');
 end
 end
 
@@ -166,7 +175,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/PDHG/pixelPressure_PDHG_sig
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_PDHG'], 'epsc');
+    saveas(gcf, ['./figures/ET16_PDHG'], 'epsc');
 end
 end
 
@@ -176,7 +185,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SPDHG/pixelPressure_S-PDHG_
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_S-PDHG'], 'epsc');
+    saveas(gcf, ['./figures/ET16_S-PDHG'], 'epsc');
 end
 end
 
@@ -442,7 +451,7 @@ xlabel('iter/epoch');
 ylabel('PSNR');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET14_PSNR', 'epsc');
+    saveas(gcf, './figures/ET16_PSNR', 'epsc');
 end
 end
 
@@ -467,7 +476,7 @@ xlabel('iter/epoch');
 ylabel('primal error');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET14_pe', 'epsc');
+    saveas(gcf, './figures/ET16_pe', 'epsc');
 end
 end
 
@@ -492,7 +501,7 @@ xlabel('iter/epoch');
 ylabel('dual error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET14_de', 'epsc');
+    saveas(gcf, './figures/ET16_de', 'epsc');
 end
 end
 
@@ -515,7 +524,7 @@ xlabel('iter/epoch');
 ylabel('relative error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET14_relativeDualError', 'epsc');
+    saveas(gcf, './figures/ET16_relativeDualError', 'epsc');
 end
 end
 
@@ -578,12 +587,12 @@ grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 maxIter 1e-4 1]);
+axis([0 maxIter 1e-5 1]);
 xlabel('iter/epoch');
 ylabel('relative distance to objective');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET14_relObjective', 'epsc');
+    saveas(gcf, './figures/ET16_relObjective', 'epsc');
 end
 end
 

@@ -7,7 +7,7 @@ close all;
 
 
 % Import data
-filenameData = './input_data/forwardSignal_RT.dat';
+filenameData = './input_data/forwardSignal_reference_14400sensors.dat';
 timeSignal = importdata(filenameData, ' ', 0);
 timeRT = timeSignal(1, :);
 inputRT = timeSignal(2:end, :);
@@ -39,7 +39,7 @@ hold on;
 plot(inputRT_noisy(1, :), 'Color', 'r');
 % Write output
 timeSignal_noisy = [timeRT; inputRT_noisy];
-dlmwrite('./input_data/forwardSignal_reference_noisy5_3600sensors.dat', timeSignal_noisy, 'delimiter', ' ');
+dlmwrite('./input_data/forwardSignal_reference_noisy5_14400sensors.dat', timeSignal_noisy, 'delimiter', ' ');
 
 %==================================================
 % ADD RANDOM NOISE - Additive

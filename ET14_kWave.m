@@ -1,6 +1,6 @@
 % Heterogeneous Propagation Medium Example
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex14_synth_recon3D_homo;
-%cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex14_synth_recon3D_homo;
+%cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex14_synth_recon3D_homo;
+cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex14_synth_recon3D_homo;
 
 clear all;
 close all;

@@ -56,36 +56,36 @@ Full_GD.lambda = '1e-4';
 
 % Gradient Descent
 GD.extract = 0;
-GD.tau = {'1', '2', '4'};
-GD.nIter = {30, 30, 30};
-GD.lambda = '1e-4';
+GD.tau = {'4', '8', '1.6e1'};
+GD.nIter = {200, 200, 30};
+GD.lambda = '1e-3';
 
 % Stochastic Gradient Descent
 SGD.extract = 0;
-SGD.tau = {'1', '2', '4', '8'};
-SGD.nIter = {30, 30, 30, 30};
-SGD.lambda = '1e-4';
+SGD.tau = {'8', '1.6e1', '3.2e1'};
+SGD.nIter = {30, 200, 30};
+SGD.lambda = '1e-3';
 SGD.batch = '1800';
 
 % FISTA
-FISTA.extract = 0;
-FISTA.tau = {'2e-1', '5e-1', '1', '2', '4'};
-FISTA.nIter = {30, 30, 30, 30};
-FISTA.lambda = '1e-4';
+FISTA.extract = 1;
+FISTA.tau = {'5e-1', '1', '2'};
+FISTA.nIter = {100, 100, 30};
+FISTA.lambda = '1e-3';
 
 % PDHG
-PDHG.extract = 0;
-PDHG.tau = {'1', '2', '4', '8', '1.6e1'};
+PDHG.extract = 1;
+PDHG.tau = {'8', '1.6e1', '3.2e1'};
 PDHG.sigma = '5e-1';
-PDHG.nIter = {30, 30, 30, 30, 30};
-PDHG.lambda = '1e-4';
+PDHG.nIter = {100, 100, 30};
+PDHG.lambda = '1e-3';
 
 % SPDHG
 SPDHG.extract = 0;
-SPDHG.tau = {'1', '2', '4', '8'};
+SPDHG.tau = {'4', '8', '1.6e1', '3.2e1'};
 SPDHG.sigma = '1e-1';
-SPDHG.nIter = {30, 30, 30, 30};
-SPDHG.lambda = '1e-4';
+SPDHG.nIter = {30, 200, 30, 30};
+SPDHG.lambda = '1e-3';
 SPDHG.batch = '100';
 
 %======================================================================
@@ -145,7 +145,7 @@ for ii = 1:length(GD.tau)
         GD_error_dd{ii}   = [GD_error_dd{ii} obj_function(y0, yi, str2double(GD.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/GD_error_lambda1em4 GD_error_psnr GD_error_pd GD_error_data GD_error_reg GD_error_dd GD;
+save ./results/error_vectors/GD_error_lambda1em3 GD_error_psnr GD_error_pd GD_error_data GD_error_reg GD_error_dd GD;
 end
 
 %======================================================================
@@ -177,7 +177,7 @@ for ii = 1:length(SGD.tau)
         SGD_error_dd{ii}   = [SGD_error_dd{ii} obj_function(y0, yi, str2double(SGD.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/SGD_error_lambda1em4_batch1800 SGD_error_psnr SGD_error_pd SGD_error_data SGD_error_reg SGD_error_dd SGD;
+save ./results/error_vectors/SGD_error_lambda1em3_batch1800 SGD_error_psnr SGD_error_pd SGD_error_data SGD_error_reg SGD_error_dd SGD;
 end
 
 %======================================================================
@@ -209,7 +209,7 @@ for ii = 1:length(FISTA.tau)
         FISTA_error_dd{ii}   = [FISTA_error_dd{ii} obj_function(y0, yi, str2double(FISTA.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/FISTA_error_lambda1em4 FISTA_error_psnr FISTA_error_pd FISTA_error_data FISTA_error_reg FISTA_error_dd FISTA;
+save ./results/error_vectors/FISTA_error_lambda1em3 FISTA_error_psnr FISTA_error_pd FISTA_error_data FISTA_error_reg FISTA_error_dd FISTA;
 end 
 
 %======================================================================
@@ -241,7 +241,7 @@ for ii = 1:length(PDHG.tau)
         PDHG_error_dd{ii}   = [PDHG_error_dd{ii} obj_function(y0, yi, str2double(PDHG.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/PDHG_error_lambda1em4_sigma1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
+save ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
 end
 
 %==============================
@@ -273,6 +273,6 @@ for ii = 1:length(SPDHG.tau)
         SPDHG_error_dd{ii}   = [SPDHG_error_dd{ii} obj_function(y0, yi, str2double(SPDHG.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/SPDHG_error_lambda1em4_sigma5em1_batch100 SPDHG_error_psnr SPDHG_error_pd SPDHG_error_data SPDHG_error_reg SPDHG_error_dd SPDHG;
+save ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100 SPDHG_error_psnr SPDHG_error_pd SPDHG_error_data SPDHG_error_reg SPDHG_error_dd SPDHG;
 end
 

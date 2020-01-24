@@ -28,7 +28,7 @@ gridR.setCMatrix(c);
 % Impulse Response
 %========================================
 % Set time
-dt = 4e-9;
+dt = 8e-9;
 %dt = min(gridR.dx, gridR.dy)/c0/2;
 tMax = 2e-5;
 gridR.setTime(dt, tMax);
@@ -58,6 +58,7 @@ clear x;
 x{1} = cat(3, (gridR.Nx-1)/2*gridR.dx, 0);
 
 % Sources
+%source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
 source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(2) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(3) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
@@ -91,6 +92,20 @@ end
 end_time = clock;
 % Measure computational time
 disp(['  total computation time ' num2str(etime(end_time, start_time))]);
+
+
+%==============================
+% Plot ray trajectories
+%==============================
+position = [700 500 320 600];
+source(1).plot_rays(gridR, 100, 'mm');
+pbaspect([1 2 1]);
+set(gcf, 'pos', position);
+title('')
+set(gca,'FontSize',13);
+saveas(gcf, 'Example06_rayTrajectories', 'epsc');
+saveas(gcf, 'Example06_rayTrajectories.fig');
+
 
 
 

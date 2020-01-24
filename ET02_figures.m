@@ -6,9 +6,9 @@ close all;
 %clear all;
 
 drawForward = 0;
-drawAdjoint = 0;
+drawAdjoint = 1;
 drawMix = 1;
-saveFigures = 1;
+saveFigures = 0;
 
 
 %===============================================================================================================
@@ -31,9 +31,26 @@ positionY    = [700 700 320 600];
 positionBar  = [700 700 363 600];
 positionYBar = [700 700 390 600];
 
-load initial_pressure;
+
+load initial_pressure_nonsmooth;
 X = 0:Rgrid.dx:(Rgrid.Nx-1)*Rgrid.dx;
 Y = 0:Rgrid.dy:(Rgrid.Ny-1)*Rgrid.dy;
+figure;
+surf(1e3*X, 1e3*Y, initial_pressure_nonsmooth', 'EdgeColor', 'none');
+axis tight;
+box on;
+pbaspect([1 2 1]);
+xlabel('x [mm]');
+ylabel('y [mm]');
+view(2);
+set(gca,'FontSize',fontSize);
+set(gcf, 'pos', positionY);
+if(saveFigures)
+saveas(gcf, 'Example02_initialPressure_nonsmooth', 'png'); 
+saveas(gcf, 'Example02_initialPressure_nonsmooth.fig'); 
+end
+
+load initial_pressure;
 figure;
 surf(1e3*X, 1e3*Y, initial_pressure', 'EdgeColor', 'none');
 axis tight;
@@ -41,14 +58,14 @@ box on;
 pbaspect([1 2 1]);
 colorbar();
 xlabel('x [mm]');
-ylabel('y [mm]');
 view(2);
 set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionYBar);
+set(gcf, 'pos', positionBar);
 if(saveFigures)
 saveas(gcf, 'Example02_initialPressure', 'png'); 
 saveas(gcf, 'Example02_initialPressure.fig'); 
 end
+
 
 %===============================================================================================================
 % SINOGRAM
@@ -152,7 +169,7 @@ surf(1e6*Rgrid.tForward, 1:nSources, error_RT, 'EdgeColor', 'none');
 axis([0 25 1 nSources]);
 view(2);
 box on;
-caxis([-.2 .2]);
+caxis([-.1 .1]);
 colorbar();
 xlabel('t [\mus]');
 %ylabel('Sensor');
@@ -162,6 +179,9 @@ if(saveFigures)
 saveas(gcf, 'Example02_error_RT_f2D.fig');
 saveas(gcf, 'Example02_error_RT_f2D', 'png');
 end
+
+REE = sum(error_RT(:).^2)/sum(signalKW_norm(:).^2)
+
 end
 
 %===============================================================================================================
@@ -242,7 +262,7 @@ surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixel', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
-caxis([-.2 .2]);
+caxis([-.1 .1]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
@@ -283,10 +303,10 @@ set(0,'DefaultFigurePaperPositionMode','auto');
 % kWave Adjoint - RT data
 %========================================
 pixelAReverse = real(adjointRTForward_kWave.p_final);
-normKW = max(pixelAReverse(:));
-pixelKW = pixelAReverse/normKW;
+%normKW = max(pixelAReverse(:));
+pixelKW2 = pixelAReverse/normKW;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW2', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 %colorbar();
@@ -325,13 +345,13 @@ end
 %========================================
 % Error mix kWave Forward - RT recon
 %========================================
-errorKW = pixelKW - pixelRT;
+errorKW = pixelKW2 - pixelRT;
 figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, errorKW', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 colorbar();
-caxis([-.2 .2]);
+caxis([-.1 .1]);
 box on;
 xlabel('x [mm]');
 %ylabel('y [mm]');
@@ -343,6 +363,11 @@ if(saveFigures)
 saveas(gcf, 'Example02_mix_error_RT', 'png');
 saveas(gcf, 'Example02_mix_error_RT.fig');
 end
+
+%e1 = pixelKW2 - pixelKW;
+%REE = sum(e1(:).^2)/sum(pixelKW(:).^2)
+e2 = pixelRT - pixelKW;
+REE = sum(e2(:).^2)/sum(pixelKW(:).^2)
 
 end
 

@@ -34,11 +34,12 @@ kgrid.t_array = 0:dt:tMax;
 % Build initial pressure
 inputIm = imread('/cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/HighFreq_2DRT/Phantoms/Veins_modified.jpg');
 sourceKW.p0 = double(255-inputIm)/255;
+initial_pressure_nonsmooth = sourceKW.p0;
 % smooth the initial pressure distribution and restore the magnitude
 sourceKW.p0 = smooth(kgrid, sourceKW.p0, true);
 initial_pressure = sourceKW.p0;
 save initial_pressure.mat initial_pressure;
-
+save initial_pressure_nonsmooth.mat initial_pressure_nonsmooth;
 %=========================================================================
 % SIMULATION
 %=========================================================================

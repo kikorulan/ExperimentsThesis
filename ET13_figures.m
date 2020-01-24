@@ -3,7 +3,7 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 clear all;
 close all;
 
-saveFigures = 1;
+saveFigures = 0;
 load adjoint_pressure;
 %==================================================
 % Dimensions
@@ -171,7 +171,7 @@ semilogy(x_axis_conv, errorConvergence_low, 'Color', 'r', 'LineWidth', 2);
 legend('Top ball', 'Middle ball', 'Bottom ball', 'location', 'southeast');
 axis([0 50 1e-3 2])
 xlabel('\Deltat [ns]')
-ylabel('Error')
+ylabel('REE')
 grid on;
 set(gca,'FontSize',fontSize);
 if(saveFigures)

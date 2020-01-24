@@ -1,7 +1,7 @@
 %================================================================================
 % Example for gridRT class
 %===============================================================================
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex03_simulation2D_het;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex02_simulation2D_homo;
 
 close all;
 %clear all;
@@ -80,29 +80,13 @@ positionBar  = [700 700 363 630];
 positionYBar = [700 700 390 630];
 
 fontSize = 13;
-%==============================
-% Sound Speed
-%==============================
-X = 0:dx:(Nx-1)*dx;
-Y = 0:dy:(Ny-1)*dy;
-figure;
-surf(1e3*X, 1e3*Y, medium.sound_speed', 'EdgeColor', 'none');
-colorbar();
-axis tight;
-box on;
-pbaspect([1 2 1]);
-xlabel('x [mm]');
-ylabel('y [mm]');
-view(2);
-set(gca,'FontSize',fontSize);
-set(gcf, 'pos', positionY);
-%saveas(gcf, 'Example03_C', 'png'); 
-%saveas(gcf, 'Example03_C.fig'); 
 
 %==============================
 % SENSORS
 %==============================
-
+X = 0:dx:(Nx-1)*dx;
+Y = 0:dy:(Ny-1)*dy;
+axisGrid = [0 1e3*X(end) 0 1e3*Y(end)];
 nRaysPlot = 140;
 colorList = cool(nRaysPlot);
 % Sensor 1
@@ -120,8 +104,8 @@ set(gcf, 'pos', position);
 xlabel('x [mm]');
 ylabel('y [mm]');
 set(gca,'FontSize',fontSize);
-saveas(gcf, 'Example03_Sensor1_rays', 'epsc');
-saveas(gcf, 'Example03_Sensor1_rays.fig'); 
+saveas(gcf, 'Example02_Sensor1_rays', 'epsc');
+saveas(gcf, 'Example02_Sensor1_rays.fig'); 
 
 % Sensor 2
 figure;
@@ -137,8 +121,8 @@ pbaspect([1 2 1]);
 set(gcf, 'pos', position);
 xlabel('x [mm]');
 set(gca,'FontSize',fontSize)
-saveas(gcf, 'Example03_Sensor2_rays', 'epsc');
-saveas(gcf, 'Example03_Sensor2_rays.fig'); 
+saveas(gcf, 'Example02_Sensor2_rays', 'epsc');
+saveas(gcf, 'Example02_Sensor2_rays.fig'); 
 
 
 % Sensor 3
@@ -155,8 +139,8 @@ pbaspect([1 2 1]);
 set(gcf, 'pos', position);
 xlabel('x [mm]');
 set(gca,'FontSize',fontSize)
-saveas(gcf, 'Example03_Sensor3_rays', 'epsc');
-saveas(gcf, 'Example03_Sensor3_rays.fig'); 
+saveas(gcf, 'Example02_Sensor3_rays', 'epsc');
+saveas(gcf, 'Example02_Sensor3_rays.fig'); 
 
 
 

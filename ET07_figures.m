@@ -1,12 +1,12 @@
 
-cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex07_noCaustic2D;
+cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex07_forward2D_het;
 
 close all;
 %clear all;
 
 load sensor_data.mat;
 
-saveFigures = 1;
+saveFigures = 0;
 %==================================================================================
 % Plot results
 %==================================================================================
@@ -189,7 +189,7 @@ hold on;
 grid on;
 box on;
 axis([0 10 2e-3 2e-1]);
-ylabel('Error convergence');
+ylabel('REE');
 xlabel('t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);

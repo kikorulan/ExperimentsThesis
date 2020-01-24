@@ -1,6 +1,6 @@
 % Read data from files
-%cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex15_synth_recon3D_het;
-cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex15_synth_recon3D_het;
+%cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex17_real_recon3D_DS2;
+cd /scratch0/NOT_BACKED_UP/frullan/ExperimentsThesis/Ex17_real_recon3D_DS2;
 
 clear all;
 close all;
@@ -23,20 +23,20 @@ dim = importdata('./input_data/dimensions.dat', ' ', 0);
 Nx = dim(1, 1); dx = dim(2, 1);
 Ny = dim(1, 2); dy = dim(2, 2);
 Nz = dim(1, 3); dz = dim(2, 3);
-   
+
 %==================================================
-% PRIMAL AND DUAL DATA
+% PRIMAL and DUAL data
 %==================================================
-% Load Initial Pressure
-u0Matrix = importdata('./input_data/initial_pressure_veins_80x240x240.dat', ' ', 0);
+% Pressure
+u0Matrix = importdata('./results_lambda5e-5/full_data/adjoint/FB/pixelPressure_DS1.dat', ' ', 0);
 u0 = matrix2cube(u0Matrix, Nz);
-%%  % Full data
-%%  time_signal = importdata(['./input_data/forwardSignal_reference_14400sensors.dat'], ' ', 0);
-%%  y0_full = time_signal(2:end, :);
-% Forward signal
-time_signal = importdata(['./input_data/forwardSignal_reference_noisy5_3600sensors.dat'], ' ', 0);
+% Full data
+time_signal = importdata(['./input_data/forwardSignal_reference_14400sensors_490timesteps.dat'], ' ', 0);
+y0_full = time_signal(2:end, :);
+% Subsampled data
+time_signal = importdata(['./input_data/forwardSignal_reference_3600sensors_490timesteps.dat'], ' ', 0);
 y0 = time_signal(2:end, :);
-  
+
 %==========================================================================================================================================================================
 %===============================                                                            ===============================================================================
 %===============================                     DISTANCE ERROR                         ===============================================================================
@@ -52,41 +52,42 @@ disp('******* DUAL DISTANCE ********');
 Full_GD.extract = 0;
 Full_GD.tau = {'1e1'};
 Full_GD.nIter = {100};
-Full_GD.lambda = '1e-4';
+Full_GD.lambda = '5e-5';
 
 % Gradient Descent
 GD.extract = 0;
-GD.tau = {'8', '1.6e1', '3.2e1'};
-GD.nIter = {200, 30, 30};
-GD.lambda = '1e-3';
+GD.tau = {'1', '2', '4', '8', '1.6e1'};
+GD.nIter = {200, 200, 30, 30, 30};
+GD.lambda = '1e-4';
 
 % Stochastic Gradient Descent
 SGD.extract = 0;
-SGD.tau = {'1.6e1', '3.2e1', '6.4e1'};
+SGD.tau = {'4', '8', '1.6e1'};
 SGD.nIter = {200, 30, 30};
-SGD.lambda = '1e-3';
+SGD.lambda = '1e-4';
 SGD.batch = '1800';
 
 % FISTA
-FISTA.extract = 1;
+FISTA.extract = 0;
 FISTA.tau = {'5e-1', '1', '2'};
-FISTA.nIter = {100, 100, 30};
-FISTA.lambda = '1e-3';
+FISTA.nIter = {30, 200, 30};
+FISTA.lambda = '1e-4';
 
 % PDHG
 PDHG.extract = 0;
-PDHG.tau = {'4', '8', '1.6e1', '3.2e1', '6.4e1'};
+PDHG.tau = {'2', '4', '8'};
 PDHG.sigma = '5e-1';
-PDHG.nIter = {200, 200, 30, 30, 30};
-PDHG.lambda = '1e-3';
+PDHG.nIter = {30, 104, 30};
+PDHG.lambda = '1e-4';
 
-% SPDHG
-SPDHG.extract = 0;
-SPDHG.tau = {'8', '1.6e1', '3.2e1'};
-SPDHG.sigma = '1e-1';
-SPDHG.nIter = {200, 30, 30};
-SPDHG.lambda = '1e-3';
+% S-PDHG
+SPDHG.extract = 1;
+SPDHG.tau = {'1', '2', '4'};
+SPDHG.sigma = '5e-1';
+SPDHG.nIter = {50, 50, 50};
+SPDHG.lambda = '1e-4';
 SPDHG.batch = '100';
+
 
 %======================================================================
 % Full Data 
@@ -113,7 +114,7 @@ for ii = 1:length(Full_GD.tau)
         Full_GD_error_dd{ii}   = [Full_GD_error_dd{ii} obj_function(y0_full, yi, str2double(Full_GD.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/Full_GD_error_lambda1em4 Full_GD_error_data Full_GD_error_reg Full_GD_error_dd Full_GD;
+save ./results/error_vectors/Full_GD_error_lambda5em5 Full_GD_error_data Full_GD_error_reg Full_GD_error_dd Full_GD;
 end
 
 %======================================================================
@@ -127,11 +128,11 @@ for ii = 1:length(GD.tau)
     GD_error_psnr{ii} = psnr(0*u0, u0);
     GD_error_pd{ii}   = norm_distance(u0, 0*u0);
     GD_error_data{ii} = obj_data(y0, 0*y0);
-    GD_error_reg{ii}  = obj_reg(0, 0*u0); 
-    GD_error_dd{ii}   = obj_function(y0, 0*y0, 0, 0*u0);
+    GD_error_reg{ii}  = obj_reg(0, 0); 
+    GD_error_dd{ii}   = obj_function(y0, 0*y0, 0, 0);
     for iter = 1:GD.nIter{ii}-1
         disp(['    iter ', int2str(iter)]) 
-        % Primal error
+       % Primal error
         ppmatrix = importdata(['./results/adjoint/FB/pixelPressure_GD_tau', GD.tau{ii}, '_lambda', GD.lambda, '_iter', int2str(iter), '.dat'], ' ', 0);
         pp = matrix2cube(ppmatrix, Nz);
         pp_pos = max(0, pp);
@@ -145,7 +146,7 @@ for ii = 1:length(GD.tau)
         GD_error_dd{ii}   = [GD_error_dd{ii} obj_function(y0, yi, str2double(GD.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/GD_error_lambda1em3 GD_error_psnr GD_error_pd GD_error_data GD_error_reg GD_error_dd GD;
+save ./results/error_vectors/GD_error_lambda1em4 GD_error_psnr GD_error_pd GD_error_data GD_error_reg GD_error_dd GD;
 end
 
 %======================================================================
@@ -158,9 +159,9 @@ for ii = 1:length(SGD.tau)
     disp(ii)
     SGD_error_psnr{ii} = psnr(0*u0, u0);
     SGD_error_pd{ii}   = norm_distance(u0, 0*u0);
-    SGD_error_data{ii} = obj_data(0, 0*u0);
-    SGD_error_reg{ii}  = obj_reg(0, 0*u0);
-    SGD_error_dd{ii}   = obj_function(y0, 0*y0, 0, 0*u0);
+    SGD_error_data{ii} = obj_data(y0, 0*y0);
+    SGD_error_reg{ii}  = obj_reg(0, 0);
+    SGD_error_dd{ii}   = obj_function(y0, 0*y0, 0, 0);
     for iter = 1:SGD.nIter{ii}-1
         disp(['    iter ', int2str(iter)]) 
         % Primal error
@@ -177,7 +178,7 @@ for ii = 1:length(SGD.tau)
         SGD_error_dd{ii}   = [SGD_error_dd{ii} obj_function(y0, yi, str2double(SGD.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/SGD_error_lambda1em3_batch1800 SGD_error_psnr SGD_error_pd SGD_error_data SGD_error_reg SGD_error_dd SGD;
+save ./results/error_vectors/SGD_error_lambda1em4_batch1800 SGD_error_psnr SGD_error_pd SGD_error_data SGD_error_reg SGD_error_dd SGD;
 end
 
 %======================================================================
@@ -209,7 +210,7 @@ for ii = 1:length(FISTA.tau)
         FISTA_error_dd{ii}   = [FISTA_error_dd{ii} obj_function(y0, yi, str2double(FISTA.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/FISTA_error_lambda1em3 FISTA_error_psnr FISTA_error_pd FISTA_error_data FISTA_error_reg FISTA_error_dd FISTA;
+save ./results/error_vectors/FISTA_error_lambda1em4 FISTA_error_psnr FISTA_error_pd FISTA_error_data FISTA_error_reg FISTA_error_dd FISTA;
 end 
 
 %======================================================================
@@ -241,12 +242,12 @@ for ii = 1:length(PDHG.tau)
         PDHG_error_dd{ii}   = [PDHG_error_dd{ii} obj_function(y0, yi, str2double(PDHG.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
+save ./results/error_vectors/PDHG_error_lambda1em4_sigma5em1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
 end
 
-%==============================
+%======================================================================
 % SPDHG
-%==============================
+%======================================================================
 if (SPDHG.extract == 1)
 disp('SPDHG');
 clear SPDHG_error_psnr SPDHG_error_pd SPDHG_error_dd SPDHG_error_data SPDHG_error_reg;
@@ -273,6 +274,5 @@ for ii = 1:length(SPDHG.tau)
         SPDHG_error_dd{ii}   = [SPDHG_error_dd{ii} obj_function(y0, yi, str2double(SPDHG.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100 SPDHG_error_psnr SPDHG_error_pd SPDHG_error_data SPDHG_error_reg SPDHG_error_dd SPDHG;
+save ./results/error_vectors/SPDHG_error_lambda1em4_sigma5em1_batch100 SPDHG_error_psnr SPDHG_error_pd SPDHG_error_data SPDHG_error_reg SPDHG_error_dd SPDHG;
 end
-

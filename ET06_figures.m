@@ -7,7 +7,7 @@ close all;
 load sensor_data.mat;
 
 saveFigures = 0;
-loadData = 0;
+loadData = 1;
 %==================================================================================
 % Plot results
 %==================================================================================
@@ -47,7 +47,7 @@ plot(scaleFactor*gridR.tForward, sensor_RT_mid/normRT, 'Color', 'g', 'LineWidth'
 plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
 plot(scaleFactor*gridR.tForward, sensor_RT_high/normRT, 'Color', 'b', 'LineWidth', 2);
 plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
-legend('RT - bottom', 'kWave - bottom','RT - middle', 'kWave - middle', 'RT - top', 'kWave - top');
+legend('HG - bottom', 'kWave - bottom','HG - middle', 'kWave - middle', 'HG - top', 'kWave - top');
 xlabel('t [\mus]');
 ylabel('Amplitude');
 set(gcf, 'pos', positionHorizontal);
@@ -194,7 +194,7 @@ hold on;
 grid on;
 box on;
 axis([0 10 2e-5 2e-3]);
-ylabel('Error convergence');
+ylabel('REE');
 xlabel('t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);

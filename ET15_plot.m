@@ -25,33 +25,37 @@ Nz = dim(1, 3); dz = dim(2, 3);
 % ITERATIVE RECONSTRUCTION
 %========================================================================================================================
 % Objective value of function
-OBJ_VAL = 0.93475;
+OBJ_VAL = 9.765;
 rel_distance = @(curve, iter) (curve(iter) - OBJ_VAL)/(curve(1) - OBJ_VAL);
+rel_error    = @(vect) (vect(1:end-1)-vect(2:end))./vect(2:end);
 
 % LOAD DATA
-load ./results/error_vectors/GD_error_lambda1em4;
-%load ./results/error_vectors/SGD_error_lambda1em4_batch1800;
-%load ./results/error_vectors/FISTA_error_lambda1em4;
-%load ./results/error_vectors/PDHG_error_lambda1em4_sigma5em1;
-%load ./results/error_vectors/SPDHG_error_lambda1em4_sigma1em1_batch100;
+load ./results/error_vectors/GD_error_lambda1em3;
+load ./results/error_vectors/SGD_error_lambda1em3_batch1800;
+load ./results/error_vectors/FISTA_error_lambda1em3;
+load ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1;
+load ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100;
 
 % Save results
 saveResults = 0;
 
+% Plot INPUT
+plot_input = 0;
+
 % Choose index
-GD.plotIndex    = 2;
-SGD.plotIndex   = 2;
-FISTA.plotIndex = 2;
-PDHG.plotIndex  = 2;
-SPDHG.plotIndex = 3;
+GD.plotIndex    = 1;
+SGD.plotIndex   = 1;
+FISTA.plotIndex = 1;
+PDHG.plotIndex  = 1;
+SPDHG.plotIndex = 1;
 
 % Choose subiter
-GD.subiter    = 18;
-SGD.subiter   = 30;
-FISTA.subiter = 16;
-PDHG.subiter  = 19;
-SPDHG.subiter = 8;
-lim_iter = 0;
+GD.subiter    = 67;
+SGD.subiter   = 100;
+FISTA.subiter = 30;
+PDHG.subiter  = 100;
+SPDHG.subiter = 27;
+lim_iter = 1;
 
 % Reconstruction plots
 plot_reconGD    = 0;
@@ -61,19 +65,19 @@ plot_reconPDHG  = 0;
 plot_reconSPDHG = 0;
 
 % Auxiliary plots
-plot_auxGD    = 1;
+plot_auxGD    = 0;
 plot_auxSGD   = 0;
-plot_auxFISTA = 0;
+plot_auxFISTA = 1;
 plot_auxPDHG  = 0;
 plot_auxSPDHG = 0;
 
 % Converge plots
-plot_PSNR    = 0;
-plot_primalE = 0;
-plot_dualE   = 0;
+plot_PSNR    = 0; 
+plot_primalE = 0; 
+plot_dualE   = 0; 
 plot_relDE   = 0;
 plot_dataE   = 0;
-plot_regE    = 0;
+plot_regE    = 0; 
 plot_relObj  = 0;
 
 %========================================================================================================================
@@ -89,6 +93,7 @@ param.dx = dx;
 time_signal = importdata(['./input_data/forwardSignal_reference_noisy5_3600sensors.dat'], ' ', 0);
 t_array = 1e6*time_signal(1, :);
 y0 = time_signal(2:end, :);
+if(plot_input)
 figure;
 imagesc(y0(1:60, :));
 xticklabels = 0:2:8;
@@ -98,23 +103,28 @@ colorbar();
 set(gca,'FontSize',15);
 xlabel('t [\mus]')
 if(saveResults)
-    saveas(gcf, './figures/ET15_forwardSignal_noisy5', 'epsc');
+saveas(gcf, './figures/ET15_forwardSignal_noisy5', 'epsc');
 end
-  
+end
+
 % Load Initial pressure
+if(plot_input)
 pressure_adjoint = importdata('./input_data/initial_pressure_veins_80x240x240.dat', ' ', 0);
 pressure_adjoint = matrix2cube(pressure_adjoint, Nz);
 plot_projection_compact(pressure_adjoint, param);
 if(saveResults)
-    saveas(gcf, './figures/ET15_initialPressure', 'epsc');
+saveas(gcf, './figures/ET15_initialPressure', 'epsc');
+end
 end
 
 % Load Adjoint Pressure
+if(plot_input)
 pressure_adjoint = importdata('./input_data/pressure_adjoint_RT.dat', ' ', 0);
 pressure_adjoint = matrix2cube(pressure_adjoint, Nz);
 plot_projection_compact(pressure_adjoint, param);
 if(saveResults)
-    saveas(gcf, './figures/ET15_pixelPressure_adjoint', 'epsc');
+saveas(gcf, './figures/ET15_pixelPressure_adjoint', 'epsc');
+end
 end
 
 %========================================================================================================================
@@ -261,7 +271,7 @@ box on;
 grid on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 30 0.7 20])
+%axis([0 30 0.7 20])
 title('SGD dual')
 end
 
@@ -351,7 +361,7 @@ box on;
 grid on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 30 0.7 20])
+%axis([0 30 0.7 20])
 title('PDHG dual')
 end
 
@@ -396,40 +406,39 @@ box on;
 grid on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 30 0.7 20])
+%axis([0 30 0.7 20])
 title('SPDHG dual')
 end
 
 %========================================================================================================================
 % PLOT ALL
 %========================================================================================================================
-
+if (lim_iter)
+else
+    GD.subiter    = GD.nIter{GD.plotIndex};
+    SGD.subiter   = SGD.nIter{SGD.plotIndex};
+    FISTA.subiter = FISTA.nIter{FISTA.plotIndex};
+    PDHG.subiter  = PDHG.nIter{PDHG.plotIndex};
+    SPDHG.subiter = SPDHG.nIter{SPDHG.plotIndex};
+end
+maxIter = max([GD.subiter-1, SGD.subiter-1, FISTA.subiter-1, PDHG.subiter-1, SPDHG.subiter-1]);
 %======================================================================
 % PLOT PSNR
 %======================================================================
 if(plot_PSNR)
 figure();
-if (lim_iter)
-    semilogy(0:GD.subiter-1, GD_error_psnr{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
-    hold on;       
-    semilogy(0:SGD.subiter-1, SGD_error_psnr{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-    semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
-    semilogy(0:PDHG.subiter-1, PDHG_error_psnr{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
-    semilogy(0:SPDHG.subiter-1, SPDHG_error_psnr{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-else
-    semilogy(0:GD.nIter{GD.plotIndex}-1, GD_error_psnr{GD.plotIndex}, 'Color', 'r', 'Linewidth', 1.5);
-    hold on;       
-    semilogy(0:SGD.nIter{SGD.plotIndex}-1, SGD_error_psnr{SGD.plotIndex}, 'Color', 'g', 'Linewidth', 1.5);
-    semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, FISTA_error_psnr{FISTA.plotIndex}, 'Color', 'b', 'Linewidth', 1.5);
-    semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, PDHG_error_psnr{PDHG.plotIndex}, 'Color', 'm', 'Linewidth', 1.5);
-    semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, SPDHG_error_psnr{SPDHG.plotIndex}, 'Color', 'c', 'Linewidth', 1.5);
-end
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+semilogy(0:GD.subiter-1, GD_error_psnr{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
+hold on;       
+semilogy(0:SGD.subiter-1, SGD_error_psnr{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, PDHG_error_psnr{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, SPDHG_error_psnr{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
+legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-%axis([0 100 46 50]);
+axis([0 maxIter 25 50]);
 xlabel('iter/epoch');
 ylabel('PSNR');
 set(gca,'FontSize',15);
@@ -443,18 +452,18 @@ end
 %======================================================================
 if(plot_primalE)
 figure();
-semilogy(0:GD.nIter{GD.plotIndex}-1, GD_error_pd{GD.plotIndex}, 'Color', 'r', 'Linewidth', 1.5);
+semilogy(0:GD.subiter-1, GD_error_pd{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
-semilogy(0:SGD.nIter{SGD.plotIndex}-1, SGD_error_pd{SGD.plotIndex}, 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, FISTA_error_pd{FISTA.plotIndex}, 'Color', 'b', 'Linewidth', 1.5);
-semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, PDHG_error_pd{PDHG.plotIndex}, 'Color', 'm', 'Linewidth', 1.5);
-semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, SPDHG_error_pd{SPDHG.plotIndex}, 'Color', 'c', 'Linewidth', 1.5);
+semilogy(0:SGD.subiter-1, SGD_error_pd{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, FISTA_error_pd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, PDHG_error_pd{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, SPDHG_error_pd{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 30 40 1e4]);
+axis([0 maxIter 40 1e4]);
 xlabel('iter/epoch');
 ylabel('primal error');
 set(gca,'FontSize',15);
@@ -468,18 +477,18 @@ end
 %======================================================================
 if(plot_dualE)
 figure();
-semilogy(0:GD.nIter{GD.plotIndex}-1, GD_error_dd{GD.plotIndex}, 'Color', 'r', 'Linewidth', 1.5);
+semilogy(0:GD.subiter-1, GD_error_dd{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
-semilogy(0:SGD.nIter{SGD.plotIndex}-1, SGD_error_dd{SGD.plotIndex}, 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, FISTA_error_dd{FISTA.plotIndex}, 'Color', 'b', 'Linewidth', 1.5);
-semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, PDHG_error_dd{PDHG.plotIndex}, 'Color', 'm', 'Linewidth', 1.5);
-semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, SPDHG_error_dd{SPDHG.plotIndex}, 'Color', 'c', 'Linewidth', 1.5);
+semilogy(0:SGD.subiter-1, SGD_error_dd{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, PDHG_error_dd{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, SPDHG_error_dd{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-%axis([0 30 9 16]);
+axis([0 maxIter 8 100]);
 xlabel('iter/epoch');
 ylabel('dual error');
 %set(gca,'FontSize',15);
@@ -491,12 +500,12 @@ end
 if(plot_relDE)
 % Relative error
 figure();
-semilogy(1:GD.nIter{GD.plotIndex}-1, (GD_error_dd{GD.plotIndex}(1:end-1)-GD_error_dd{GD.plotIndex}(2:end))./GD_error_dd{GD.plotIndex}(2:end), 'Color', 'r', 'Linewidth', 1.5)
+semilogy(1:GD.subiter-1, rel_error(GD_error_dd{GD.plotIndex}(1:GD.subiter)), 'Color', 'r', 'Linewidth', 1.5)
 hold on;       
-semilogy(1:SGD.nIter{SGD.plotIndex}-1, (SGD_error_dd{SGD.plotIndex}(1:end-1)-SGD_error_dd{SGD.plotIndex}(2:end))./SGD_error_dd{SGD.plotIndex}(2:end), 'Color', 'g', 'Linewidth', 1.5)
-semilogy(1:FISTA.nIter{FISTA.plotIndex}-1, (FISTA_error_dd{FISTA.plotIndex}(1:end-1)-FISTA_error_dd{FISTA.plotIndex}(2:end))./FISTA_error_dd{FISTA.plotIndex}(2:end), 'Color', 'b', 'Linewidth', 1.5)
-semilogy(1:PDHG.nIter{PDHG.plotIndex}-1, (PDHG_error_dd{PDHG.plotIndex}(1:end-1)-PDHG_error_dd{PDHG.plotIndex}(2:end))./PDHG_error_dd{PDHG.plotIndex}(2:end), 'Color', 'm', 'Linewidth', 1.5)
-semilogy(1:SPDHG.nIter{SPDHG.plotIndex}-1, (SPDHG_error_dd{SPDHG.plotIndex}(1:end-1)-SPDHG_error_dd{SPDHG.plotIndex}(2:end))./SPDHG_error_dd{SPDHG.plotIndex}(2:end), 'Color', 'c', 'Linewidth', 1.5)
+semilogy(1:SGD.subiter-1,  rel_error(SGD_error_dd{SGD.plotIndex}(1:SGD.subiter)), 'Color', 'g', 'Linewidth', 1.5)
+semilogy(1:FISTA.subiter-1, rel_error(FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter)), 'Color', 'b', 'Linewidth', 1.5)
+semilogy(1:PDHG.subiter-1, rel_error(PDHG_error_dd{PDHG.plotIndex}(1:PDHG.subiter)), 'Color', 'm', 'Linewidth', 1.5)
+semilogy(1:SPDHG.subiter-1, rel_error(SPDHG_error_dd{SPDHG.plotIndex}(1:SPDHG.subiter)), 'Color', 'c', 'Linewidth', 1.5)
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
@@ -506,7 +515,7 @@ ax.GridAlpha = 0.2;
 xlabel('iter/epoch');
 ylabel('relative error');
 %set(gca,'FontSize',15);
-if(saveResult)
+if(saveResults)
     saveas(gcf, './figures/ET15_relativeDualError', 'epsc');
 end
 end
@@ -517,39 +526,41 @@ end
 % Data term
 if(plot_dataE)
 figure();
-semilogy(0:GD.nIter{GD.plotIndex}-1, GD_error_data{GD.plotIndex}, 'Color', 'r', 'Linewidth', 1.5);
+semilogy(0:GD.subiter-1, GD_error_data{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
-semilogy(0:SGD.nIter{SGD.plotIndex}-1, SGD_error_data{SGD.plotIndex}, 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, FISTA_error_data{FISTA.plotIndex}, 'Color', 'b', 'Linewidth', 1.5);
-semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, PDHG_error_data{PDHG.plotIndex}, 'Color', 'm', 'Linewidth', 1.5);
-semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, SPDHG_error_data{SPDHG.plotIndex}, 'Color', 'c', 'Linewidth', 1.5);
+semilogy(0:SGD.subiter-1, SGD_error_data{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, FISTA_error_data{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, PDHG_error_data{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, SPDHG_error_data{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-%axis([0 30 0.9 20]);
+axis([0 maxIter 1e-1 1e3]);
 xlabel('iter/epoch');
-ylabel('data term');
+ylabel('Data error');
+set(gca,'FontSize',15);
 end
 
 % Plot Regularization Term
 if(plot_regE)
 figure();
-semilogy(0:GD.nIter{GD.plotIndex}-1, GD_error_reg{GD.plotIndex}, 'Color', 'r', 'Linewidth', 1.5);
+semilogy(0:GD.subiter-1, GD_error_reg{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
-semilogy(0:SGD.nIter{SGD.plotIndex}-1, SGD_error_reg{SGD.plotIndex}, 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, FISTA_error_reg{FISTA.plotIndex}, 'Color', 'b', 'Linewidth', 1.5);
-semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, PDHG_error_reg{PDHG.plotIndex}, 'Color', 'm', 'Linewidth', 1.5);
-semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, SPDHG_error_reg{SPDHG.plotIndex}, 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+semilogy(0:SGD.subiter-1, SGD_error_reg{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, FISTA_error_reg{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, PDHG_error_reg{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, SPDHG_error_reg{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
+legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-%axis([0 30 0.9 20]);
+axis([0 maxIter 1 20]);
 xlabel('iter/epoch');
-ylabel('regularization');
+ylabel('Regularization error');
+set(gca,'FontSize',15);
 end
 
 %======================================================================
@@ -557,27 +568,18 @@ end
 %======================================================================
 if (plot_relObj)
 figure();
-if (lim_iter)
-    semilogy(0:GD.subiter-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
-    hold on;       
-    semilogy(0:SGD.subiter-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-    semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{SGD.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
-    semilogy(0:PDHG.subiter-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
-    semilogy(0:SPDHG.subiter-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-else
-    semilogy(0:GD.nIter{GD.plotIndex}-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.nIter{GD.plotIndex}), 'Color', 'r', 'Linewidth', 1.5);
-    hold on;       
-    semilogy(0:SGD.nIter{SGD.plotIndex}-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.nIter{SGD.plotIndex}), 'Color', 'g', 'Linewidth', 1.5);
-    semilogy(0:FISTA.nIter{FISTA.plotIndex}-1, rel_distance(FISTA_error_dd{SGD.plotIndex}, 1:FISTA.nIter{FISTA.plotIndex}), 'Color', 'b', 'Linewidth', 1.5);
-    semilogy(0:PDHG.nIter{PDHG.plotIndex}-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.nIter{PDHG.plotIndex}), 'Color', 'm', 'Linewidth', 1.5);
-    semilogy(0:SPDHG.nIter{SPDHG.plotIndex}-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.nIter{SPDHG.plotIndex}), 'Color', 'c', 'Linewidth', 1.5);
-end
+semilogy(0:GD.subiter-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
+hold on;       
+semilogy(0:SGD.subiter-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
+semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+semilogy(0:PDHG.subiter-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
+semilogy(0:SPDHG.subiter-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 20 1e-4 1]);
+axis([0 maxIter 1e-5 1]);
 xlabel('iter/epoch');
 ylabel('relative distance to objective');
 set(gca,'FontSize',15);

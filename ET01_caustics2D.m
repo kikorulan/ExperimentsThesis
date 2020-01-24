@@ -7,9 +7,9 @@ close all;
 %clear all;
 
 % Choose which caustics to run
-caustic1 = 1;
+caustic1 = 0;
 caustic2 = 1;
-
+saveFigures = 0;
 %========================================
 % Grid definition
 %========================================
@@ -197,8 +197,10 @@ gridR.plot_soundSpeed();
 set(gcf, 'pos', positionYBar);
 colorbar();
 set(gca, 'FontSize', fontSize);
+if(saveFigures)
 saveas(gcf, 'Example01_2D_caustic2_C', 'png'); 
 saveas(gcf, 'Example01_2D_caustic2_C.fig'); 
+end
 
 %==============================
 % Ray trajectories
@@ -220,13 +222,17 @@ set(gcf, 'pos', position);
 % Red mark
 xR = 4.6:1e-1:9;
 yR = 9*(xR-5.95) + 20;
+xR2 = 4.6:1e-1:12.8;
+yR2 = 1.1*(xR2-5.95) + 9.3;
 plot(xR, yR, 'LineWidth', 2, 'Color', 'r');
+plot(xR2, yR2, 'LineWidth', 2, 'Color', 'r');
 
 % Save
 set(gca, 'FontSize', fontSize);
+if(saveFigures)
 saveas(gcf, 'Example01_2D_caustic2_rays', 'epsc'); 
 saveas(gcf, 'Example01_2D_caustic2_rays.fig'); 
-
+end
 
 % Measure time
 end_time = clock;

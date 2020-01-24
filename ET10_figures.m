@@ -83,7 +83,7 @@ plot(scaleFactor*tForward_dt1, sensor_RT_high_dt1/normRT, 'Color', 'b', 'LineWid
 plot(scaleFactor*kgrid.t_array, sensor_data_low(1, :)/normKWave, 'Color', [0.8 0.2 0.2]);
 plot(scaleFactor*kgrid.t_array, sensor_data_mid(1, :)/normKWave, 'Color', [0.2 0.8 0.2]);
 plot(scaleFactor*kgrid.t_array, sensor_data_high(1, :)/normKWave, 'Color', [0.2 0.2 0.8]);
-legend('RT - bottom', 'RT - middle', 'RT - top', 'kWave - middle', 'kWave - bottom', 'kWave - top');
+legend('HG - bottom', 'HG - middle', 'HG - top', 'kWave - middle', 'kWave - bottom', 'kWave - top');
 xlabel('t [\mus]');
 ylabel('Amplitude');
 set(gcf, 'pos', positionHorizontal);
@@ -267,7 +267,7 @@ hold on;
 grid on;
 box on;
 axis([0 50 1e-4 2e-1]);
-ylabel('Error convergence');
+ylabel('REE');
 xlabel('t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);

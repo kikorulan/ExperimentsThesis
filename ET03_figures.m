@@ -2,14 +2,14 @@
 
 cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/ExperimentsThesis/Ex03_simulation2D_het;
 
-%close all;
+close all;
 %clear all;
 
-drawForward = 1;
+drawForward = 0;
 drawAdjoint = 1;
 drawMix = 1;
 
-saveFigures = 1;
+saveFigures = 0;
 %===============================================================================================================
 %===============================================================================================================
 %=====================                 FORWARD PROBLEM              ============================================
@@ -132,6 +132,8 @@ if(saveFigures)
 saveas(gcf, 'Example03_error_RT_f2D.fig');
 saveas(gcf, 'Example03_error_RT_f2D', 'png');
 end
+
+REE = sum(error_RT(:).^2)/sum(signalKW_norm(:).^2)
 end
 
 %===============================================================================================================
@@ -220,7 +222,6 @@ if(saveFigures)
 saveas(gcf, 'Example03_error_RT', 'png');
 saveas(gcf, 'Example03_error_RT.fig');
 end
-end
 
 
 figure;
@@ -228,6 +229,10 @@ plot(pixelKW(64, :));
 hold on;
 plot(pixelRT(64, :));
 legend('KW', 'RT')
+
+REE = sum(pixel(:).^2)/sum(pixelKW(:).^2)
+end
+
 %===============================================================================================================
 %===============================================================================================================
 %=====================             MIX ADJOINT PROBLEM              ============================================
@@ -253,10 +258,10 @@ set(0,'DefaultFigurePaperPositionMode','auto');
 % kWave Adjoint - RT data
 %========================================
 pixelAReverse = adjointRTForward_kWave.p_final;
-normKW = max(pixelAReverse(:));
-pixelKW = pixelAReverse/normKW;
+%normKW = max(pixelAReverse(:));
+pixelKW2 = pixelAReverse/normKW;
 figure;
-surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW', 'EdgeColor', 'none');
+surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelKW2', 'EdgeColor', 'none');
 view(2);
 axis(axisGrid);
 %colorbar();
@@ -276,7 +281,7 @@ end
 % RT Adjoint - kWave data
 %========================================
 pixelAReverse = real(adjointKWaveForward_RT);
-normKW = max(pixelAReverse(:));
+%normKW = max(pixelAReverse(:));
 pixelRT = pixelAReverse/normKW;
 figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixelRT', 'EdgeColor', 'none');
@@ -298,7 +303,7 @@ end
 %========================================
 % Error mix kWave Forward - RT recon
 %========================================
-pixel = pixelKW - pixelRT;
+pixel = pixelKW2 - pixelRT;
 figure;
 surf(1e3*Rgrid.xAxis, 1e3*Rgrid.yAxis, pixel', 'EdgeColor', 'none');
 view(2);
@@ -316,6 +321,8 @@ saveas(gcf, 'Example03_mix_error_RT', 'png');
 saveas(gcf, 'Example03_mix_error_RT.fig');
 end
 
+REE = sum((pixelKW(:)-pixelKW2(:)).^2)/sum(pixelKW(:).^2)
+REE = sum((pixelKW(:)-pixelRT(:)).^2)/sum(pixelKW(:).^2)
 end
 
 

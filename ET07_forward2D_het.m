@@ -61,8 +61,8 @@ clear x;
 x{1} = cat(3, (gridR.Nx-1)/2*gridR.dx, 0);
 
 % Sources
-source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
-%source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
+%source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
+source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(2) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(3) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 

@@ -3,7 +3,7 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 clear all;
 close all;
 
-saveFigures = 1;
+saveFigures = 0;
 fontSize = 14;
 %==================================================
 % Dimensions
@@ -28,6 +28,23 @@ pressure_adjoint_kWave_RT_data_matrix = importdata(['./output_data/pressure_adjo
 pressure_adjoint_RT_matrix            = importdata(['./output_data/pressure_adjoint_RT.dat'], ' ', 0);
 pressure_adjoint_RT_kWave_data_matrix = importdata(['./output_data/pressure_adjoint_RT_kWave_data.dat'], ' ', 0);
 
+%==================================================
+% Sound speed
+%==================================================
+param.dx = dx;
+param.lim = true;
+param.cMin = 1580*(1-0.06);
+param.cMax = 1580*(1+0.06);
+param.fontSize = fontSize;
+% Sound speed
+sound_speed = importdata(['./input_data/sound_speed.dat'], ' ', 0);
+sound_speed = matrix2cube(sound_speed, Nz);
+plot_slice_compact(sound_speed, param);
+if saveFigures
+saveas(gcf, 'Example05_soundSpeed', 'png');
+saveas(gcf, 'Example05_soundSpeed.fig');
+end
+
 %========================================================================================================================
 % INITIAL PRESSURE AND FORWARD SIGNAL
 %========================================================================================================================
@@ -48,8 +65,8 @@ caxis([-0.073 0.073])
 set(gca,'FontSize',16);
 set(gcf, 'pos', positionY);
 if saveFigures
-    saveas(gcf, 'Example05_kWave_f2D', 'png');
-    saveas(gcf, 'Example05_kWave_f2D.fig');
+saveas(gcf, 'Example05_kWave_f2D', 'png');
+saveas(gcf, 'Example05_kWave_f2D.fig');
 end
 
 % RT
@@ -64,8 +81,8 @@ colorbar();
 set(gca,'FontSize',16);
 set(gcf, 'pos', positionBar);
 if saveFigures
-    saveas(gcf, 'Example05_RT_f2D', 'png');
-    saveas(gcf, 'Example05_RT_f2D.fig');
+saveas(gcf, 'Example05_RT_f2D', 'png');
+saveas(gcf, 'Example05_RT_f2D.fig');
 end
 
 
@@ -81,14 +98,15 @@ colorbar();
 set(gca,'FontSize',16);
 set(gcf, 'pos', positionBar);
 if saveFigures
-    saveas(gcf, 'Example05_error_RT_f2D', 'png');
-    saveas(gcf, 'Example05_error_RT_f2D.fig');
+saveas(gcf, 'Example05_error_RT_f2D', 'png');
+saveas(gcf, 'Example05_error_RT_f2D.fig');
 end
 
 
 ERT = sum(sensor_data_RT(:).^2)
 EKW = sum(sensor_data_kWave(:).^2)
-
+error = sensor_data_RT - sensor_data_kWave;
+REE = sum(error(:).^2)/EKW
 %========================================================================================================================
 % ADJOINT PRESSURE
 %========================================================================================================================
@@ -102,33 +120,41 @@ param.cb = false;
 pressure_adjoint_kWave = matrix2cube(pressure_adjoint_kWave_matrix, Nz);
 plot_projection_compact(pressure_adjoint_kWave, param);
 if saveFigures
-    saveas(gcf, 'Example05_kWave_adjoint', 'png');
-    saveas(gcf, 'Example05_kWave_adjoint.fig');
+saveas(gcf, 'Example05_kWave_adjoint', 'png');
+saveas(gcf, 'Example05_kWave_adjoint.fig');
 end
 % Adjoint RT
 param.cb = true;
 pressure_adjoint_RT = matrix2cube(pressure_adjoint_RT_matrix, Nz);
 plot_projection_compact(pressure_adjoint_RT, param);
 if saveFigures
-    saveas(gcf, 'Example05_RT_adjoint', 'png');
-    saveas(gcf, 'Example05_RT_adjoint.fig');
+saveas(gcf, 'Example05_RT_adjoint', 'png');
+saveas(gcf, 'Example05_RT_adjoint.fig');
 end
 % Adjoint kWave - RT data
 param.cb = false;
 pressure_adjoint_kWave_RTdata = matrix2cube(pressure_adjoint_kWave_RT_data_matrix, Nz);
 plot_projection_compact(pressure_adjoint_kWave_RTdata, param);
 if saveFigures
-    saveas(gcf, 'Example05_kWave_adjoint_RT_data', 'png');
-    saveas(gcf, 'Example05_kWave_adjoint_RT_data.fig');
+saveas(gcf, 'Example05_kWave_adjoint_RT_data', 'png');
+saveas(gcf, 'Example05_kWave_adjoint_RT_data.fig');
 end
 % Adjoint RT - kWave data
 param.cb = true;
 pressure_adjoint_RT_kWaveData = matrix2cube(pressure_adjoint_RT_kWave_data_matrix, Nz);
 plot_projection_compact(pressure_adjoint_RT_kWaveData, param);
 if saveFigures
-    saveas(gcf, 'Example05_RT_adjoint_kWave_data', 'png');
-    saveas(gcf, 'Example05_RT_adjoint_kWave_data.fig');
+saveas(gcf, 'Example05_RT_adjoint_kWave_data', 'png');
+saveas(gcf, 'Example05_RT_adjoint_kWave_data.fig');
 end
 
 EKW = sum(pressure_adjoint_kWave(:).^2)
 ERT = sum(pressure_adjoint_RT_kWaveData(:).^2)
+
+error_adj = pressure_adjoint_kWave - pressure_adjoint_RT;
+error_kW  = pressure_adjoint_kWave - pressure_adjoint_kWave_RTdata;
+error_RT  = pressure_adjoint_kWave - pressure_adjoint_RT_kWaveData;
+
+REE_adj = sum(error_adj(:).^2)/sum(pressure_adjoint_kWave(:).^2)
+REE_kW  = sum(error_kW(:).^2)/sum(pressure_adjoint_kWave(:).^2)
+REE_RT  = sum(error_RT(:).^2)/sum(pressure_adjoint_kWave(:).^2)

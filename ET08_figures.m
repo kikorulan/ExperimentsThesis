@@ -8,7 +8,7 @@ load sensor_data.mat;
 load adjoint_data.mat;
 
 saveFigures = 0;
-loadData = 0;
+loadData = 1;
 %==================================================================================
 % Plot results
 %==================================================================================
@@ -142,7 +142,7 @@ end
 
 
 % Line plot
-line_kWave = p_kWave_high(:, 256) + p_kWave_mid(:, 256) + p_kWave_high(:, 256);
+line_kWave = 0*p_kWave_high(:, 256) + p_kWave_mid(:, 256) + 0*p_kWave_high(:, 256);
 line_RT = p_RT_mid(:, 256);
 figure;
 % Subplot 1
@@ -151,7 +151,7 @@ plot(line_kWave, 'Color', 'b', 'LineWidth', 2);
 hold on;
 plot(line_RT, 'Color', 'r');
 axis([1 1024 -1e-4 3e-4]);
-legend('kWave', 'RT', 'location', 'northwest');
+legend('kWave', 'HG', 'location', 'northwest');
 grid on;
 set(gca,'FontSize',fontSize);
 xlabel('pixel');
@@ -186,7 +186,8 @@ hold on;
 grid on;
 box on;
 axis([0 10 1e-5 1e-3]);
-ylabel('Error convergence');
+set(gca, 'xtick', [0 2 4 6 8 10]);
+ylabel('REE');
 xlabel('t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);

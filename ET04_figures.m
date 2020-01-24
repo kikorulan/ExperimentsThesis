@@ -98,6 +98,8 @@ end
 
 ERT = sum(sensor_data_RT(:).^2)
 EKW = sum(sensor_data_kWave(:).^2)
+error = sensor_data_RT - sensor_data_kWave;
+REE = sum(error(:).^2)/EKW
 %========================================================================================================================
 % ADJOINT PRESSURE
 %========================================================================================================================
@@ -140,4 +142,11 @@ if saveFigures
 end
 
 EKW = sum(pressure_adjoint_kWave(:).^2)
-ERT = sum(pressure_adjoint_RT_kWaveData(:).^2)
+ERT = sum(pressure_adjoint_RT(:).^2)
+error_adj = pressure_adjoint_kWave - pressure_adjoint_RT;
+error_kW  = pressure_adjoint_kWave - pressure_adjoint_kWave_RTdata;
+error_RT  = pressure_adjoint_kWave - pressure_adjoint_RT_kWaveData;
+
+REE_adj = sum(error_adj(:).^2)/sum(pressure_adjoint_kWave(:).^2)
+REE_kW  = sum(error_kW(:).^2)/sum(pressure_adjoint_kWave(:).^2)
+REE_RT  = sum(error_RT(:).^2)/sum(pressure_adjoint_kWave(:).^2)
