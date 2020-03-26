@@ -58,8 +58,8 @@ clear x;
 x{1} = cat(3, (gridR.Nx-1)/2*gridR.dx, 0);
 
 % Sources
-%source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
-source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
+source(1) = gridR.newSource(x{1}, 0, pi, nRays, tStep, tMax);
+%source(1) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(2) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 source(3) = gridR.newSource(x{1}, pi/4, 3*pi/4, nRays, tStep, tMax);
 
@@ -100,6 +100,7 @@ disp(['  total computation time ' num2str(etime(end_time, start_time))]);
 position = [700 500 320 600];
 source(1).plot_rays(gridR, 100, 'mm');
 pbaspect([1 2 1]);
+plot(6.4, 0, '-o', 'MarkerSize', 8, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'k')
 set(gcf, 'pos', position);
 title('')
 set(gca,'FontSize',13);

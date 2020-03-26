@@ -32,51 +32,51 @@ rel_error    = @(vect) (vect(1:end-1)-vect(2:end))./vect(2:end);
 load ./results/error_vectors/GD_error_lambda1em3;
 load ./results/error_vectors/SGD_error_lambda1em3_batch1800;
 load ./results/error_vectors/FISTA_error_lambda1em3;
-load ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1;
+load ./results/error_vectors/PDHG_error_lambda1em3_sigma1;
 load ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100;
 
 % Save results
-saveResults = 0;
+saveResults = 1;
 
 % Plot INPUT
 plot_input = 0;
 
 % Choose index
-GD.plotIndex    = 1;
+GD.plotIndex    = 2;
 SGD.plotIndex   = 2;
 FISTA.plotIndex = 1;
-PDHG.plotIndex  = 1;
+PDHG.plotIndex  = 3;
 SPDHG.plotIndex = 2;
 
 % Choose subiter
-GD.subiter    = 58;
+GD.subiter    = 35;
 SGD.subiter   = 100;
-FISTA.subiter = 47;
+FISTA.subiter = 75;
 PDHG.subiter  = 100;
-SPDHG.subiter = 27;
+SPDHG.subiter = 15;
 lim_iter = 1;
 
 % Reconstruction plots
-plot_reconGD    = 0;
-plot_reconSGD   = 0;
+plot_reconGD    = 1;
+plot_reconSGD   = 1;
 plot_reconFISTA = 0;
 plot_reconPDHG  = 1;
-plot_reconSPDHG = 0;
+plot_reconSPDHG = 1;
 
 % Auxiliary plots
 plot_auxGD    = 0;
 plot_auxSGD   = 0;
 plot_auxFISTA = 0;
-plot_auxPDHG  = 0;
+plot_auxPDHG  = 1;
 plot_auxSPDHG = 0;
 
 % Converge plots
 plot_PSNR    = 1;
-plot_primalE = 1;
-plot_dualE   = 1;
-plot_relDE   = 1;
-plot_dataE   = 1;
-plot_regE    = 1; 
+plot_primalE = 0;
+plot_dualE   = 0;
+plot_relDE   = 0;
+plot_dataE   = 0;
+plot_regE    = 0; 
 plot_relObj  = 1;
 
 %========================================================================================================================
@@ -136,7 +136,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/FB/pixelPressure_GD_tau', G
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_GD'], 'epsc');
+saveas(gcf, ['./figures/ET14_GD'], 'epsc');
 end
 end
 
@@ -146,7 +146,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SFB/pixelPressure_S-GD_tau'
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_S-GD'], 'epsc');
+saveas(gcf, ['./figures/ET14_S-GD'], 'epsc');
 end
 end
 
@@ -156,7 +156,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/AFB/pixelPressure_FISTA_tau
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_FISTA'], 'epsc');
+saveas(gcf, ['./figures/ET14_FISTA'], 'epsc');
 end
 end
 
@@ -166,7 +166,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/PDHG/pixelPressure_PDHG_sig
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_PDHG'], 'epsc');
+saveas(gcf, ['./figures/ET14_PDHG'], 'epsc');
 end
 end
 
@@ -176,7 +176,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SPDHG/pixelPressure_S-PDHG_
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET14_S-PDHG'], 'epsc');
+saveas(gcf, ['./figures/ET14_S-PDHG'], 'epsc');
 end
 end
 
@@ -429,10 +429,11 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_psnr{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_psnr{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_psnr{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_psnr{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
@@ -454,7 +455,7 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_pd{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_pd{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_pd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_pd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_pd{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_pd{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
 legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
@@ -479,10 +480,11 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_dd{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_dd{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_dd{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_dd{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
@@ -502,10 +504,11 @@ figure();
 semilogy(1:GD.subiter-1, rel_error(GD_error_dd{GD.plotIndex}(1:GD.subiter)), 'Color', 'r', 'Linewidth', 1.5)
 hold on;       
 semilogy(1:SGD.subiter-1,  rel_error(SGD_error_dd{SGD.plotIndex}(1:SGD.subiter)), 'Color', 'g', 'Linewidth', 1.5)
-semilogy(1:FISTA.subiter-1, rel_error(FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter)), 'Color', 'b', 'Linewidth', 1.5)
+%semilogy(1:FISTA.subiter-1, rel_error(FISTA_error_dd{FISTA.plotIndex}(1:FISTA.subiter)), 'Color', 'b', 'Linewidth', 1.5)
 semilogy(1:PDHG.subiter-1, rel_error(PDHG_error_dd{PDHG.plotIndex}(1:PDHG.subiter)), 'Color', 'm', 'Linewidth', 1.5)
 semilogy(1:SPDHG.subiter-1, rel_error(SPDHG_error_dd{SPDHG.plotIndex}(1:SPDHG.subiter)), 'Color', 'c', 'Linewidth', 1.5)
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
@@ -528,10 +531,11 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_data{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_data{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_data{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_data{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_data{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_data{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
@@ -548,10 +552,11 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_reg{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_reg{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_reg{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_reg{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_reg{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_reg{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
@@ -570,10 +575,11 @@ figure();
 semilogy(0:GD.subiter-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;

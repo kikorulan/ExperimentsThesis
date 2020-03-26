@@ -22,7 +22,6 @@ set(0,'DefaultFigurePaperPositionMode','auto');
 fontSize = 16;
 scaleFactor = 1e3;
 
-figure;
 %================================================================================
 % ERROR PLOT
 % kWave and RT
@@ -144,12 +143,20 @@ figure;
 surf(scaleFactor*gridR.xAxis, scaleFactor*gridR.yAxis, p_kWave_low + p_kWave_mid + p_kWave_high, 'EdgeColor', 'none');
 view(2);
 box on;
+hold on;
 axis tight;
 xlabel('x [mm]');
 ylabel('y [mm]');
 pbaspect([1 2 1]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionY);
+% Plot caustic
+tC = 0:1e-2:1;
+xC = 6.35+tC*2.8;
+yC = tC*25.6;
+zC = ones(1, length(tC));
+plot3(xC, yC, zC, 'r', 'LineWidth', 1);
+view(2)
 if(saveFigures)
 saveas(gcf, 'Example09_adjoint_kWave', 'png');
 saveas(gcf, 'Example09_adjoint_kWave.fig');
@@ -160,6 +167,7 @@ figure;
 surf(scaleFactor*gridR.xAxis, scaleFactor*gridR.yAxis, p_RT_low + p_RT_mid + p_RT_high, 'EdgeColor', 'none');
 view(2);
 box on;
+hold on;
 axis tight;
 xlabel('x [mm]');
 pbaspect([1 2 1]);
@@ -167,6 +175,13 @@ colorbar();
 caxis([min(p_kWave_low(:)) max(p_kWave_low(:))]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+% Plot caustic
+tC = 0:1e-2:1;
+xC = 6.35+tC*2.8;
+yC = tC*25.6;
+zC = ones(1, length(tC));
+plot3(xC, yC, zC, 'r', 'LineWidth', 1);
+view(2)
 if(saveFigures)
 saveas(gcf, 'Example09_adjoint_RT', 'png');
 saveas(gcf, 'Example09_adjoint_RT.fig');
@@ -177,6 +192,7 @@ figure;
 surf(scaleFactor*gridR.xAxis, scaleFactor*gridR.yAxis, dif_low_dt3 + dif_mid_dt3 + dif_high_dt3, 'EdgeColor', 'none');
 view(2);
 box on;
+hold on;
 axis tight;
 xlabel('x [mm]');
 pbaspect([1 2 1]);
@@ -184,6 +200,13 @@ colorbar();
 caxis([-max(p_RT_low(:))/10 max(p_RT_low(:))/10]);
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionBar);
+% Plot caustic
+tC = 0:1e-2:1;
+xC = 6.35+tC*2.8;
+yC = tC*25.6;
+zC = ones(1, length(tC));
+plot3(xC, yC, zC, 'r', 'LineWidth', 1);
+view(2)
 if(saveFigures)
 saveas(gcf, 'Example09_error_2e-9', 'png');
 saveas(gcf, 'Example09_error_2e-9.fig');
@@ -237,7 +260,7 @@ box on;
 axis([0 10 1e-5 2e-1]);
 set(gca, 'xtick', [0 2 4 6 8 10]);
 ylabel('REE');
-xlabel('t [ns]');
+xlabel('\Delta t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
 set(gca,'FontSize',fontSize);

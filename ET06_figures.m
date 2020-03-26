@@ -15,7 +15,7 @@ loadData = 1;
 %load gridRRT.mat;
 %load sensor_data.mat;
 position = [700 500 320 600];
-positionYBar = [700 700 375 600];
+positionYBar = [700 700 400 600];
 positionBar = [700 700 375 600];
 positionHorizontal = [700 700 1000 400];
 set(0,'DefaultFigurePaperPositionMode','auto');
@@ -75,13 +75,19 @@ dif_low_dt1 = sensor_RT_low/normRT - spline_low;
 dif_mid_dt1 = sensor_RT_mid/normRT - spline_mid;
 dif_high_dt1 = sensor_RT_high/normRT - spline_high;
 
+% Rel error
 error_low_dt1 = sum(dif_low_dt1.^2)/sum(spline_low.^2);
 error_mid_dt1 = sum(dif_mid_dt1.^2)/sum(spline_mid.^2);
 error_high_dt1 = sum(dif_high_dt1.^2)/sum(spline_high.^2);
 
+% Max error
+max_error_low_dt1 = max(abs(dif_low_dt1))*normKWave;
+max_error_mid_dt1 = max(abs(dif_mid_dt1))*normKWave;
+max_error_high_dt1 = max(abs(dif_high_dt1))*normKWave;
+
 figure;
 hold on;
-axis([0 20 -.035 .035]);
+axis([0 20 -.05 .05]);
 grid on;
 box on;
 plot(scaleFactor*gridR.tForward, dif_low_dt1, 'Color', 'r', 'LineWidth', 2);
@@ -116,13 +122,19 @@ dif_low_dt2 = sensor_RT_low/normRT - spline_low;
 dif_mid_dt2 = sensor_RT_mid/normRT - spline_mid;
 dif_high_dt2 = sensor_RT_high/normRT - spline_high;
 
+% Rel error
 error_low_dt2 = sum(dif_low_dt2.^2)/sum(spline_low.^2);
 error_mid_dt2 = sum(dif_mid_dt2.^2)/sum(spline_mid.^2);
 error_high_dt2 = sum(dif_high_dt2.^2)/sum(spline_high.^2);
 
+% Max error
+max_error_low_dt2 = max(abs(dif_low_dt2))*normKWave;
+max_error_mid_dt2 = max(abs(dif_mid_dt2))*normKWave;
+max_error_high_dt2 = max(abs(dif_high_dt2))*normKWave;
+
 figure;
 hold on;
-axis([0 20 -.035 .035]);
+axis([0 20 -.03 .03]);
 grid on;
 box on;
 plot(scaleFactor*gridR.tForward, dif_low_dt2, 'Color', 'r', 'LineWidth', 2);
@@ -157,13 +169,19 @@ dif_low_dt3 = sensor_RT_low/normRT - spline_low;
 dif_mid_dt3 = sensor_RT_mid/normRT - spline_mid;
 dif_high_dt3 = sensor_RT_high/normRT - spline_high;
 
+% Rel error
 error_low_dt3 = sum(dif_low_dt3.^2)/sum(spline_low.^2);
 error_mid_dt3 = sum(dif_mid_dt3.^2)/sum(spline_mid.^2);
 error_high_dt3 = sum(dif_high_dt3.^2)/sum(spline_high.^2);
 
+% Max error
+max_error_low_dt3 = max(abs(dif_low_dt3))*normKWave;
+max_error_mid_dt3 = max(abs(dif_mid_dt3))*normKWave;
+max_error_high_dt3 = max(abs(dif_high_dt3))*normKWave;
+
 figure;
 hold on;
-axis([0 20 -.035 .035]);
+axis([0 20 -.02 .02]);
 grid on;
 box on;
 plot(scaleFactor*gridR.tForward, dif_low_dt3, 'Color', 'r', 'LineWidth', 2);
@@ -194,8 +212,10 @@ hold on;
 grid on;
 box on;
 axis([0 10 2e-5 2e-3]);
+set(gca, 'ytick', [2e-5 1e-4 1e-3])
+set(gca, 'yticklabel', {'2\cdot 10^{-5}', '10^{-4}', '10^{-3}'})
 ylabel('REE');
-xlabel('t [ns]');
+xlabel('\Delta t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
 set(gca,'FontSize',fontSize);
@@ -203,6 +223,37 @@ legend('Bottom ball', 'Middle ball', 'Top ball', 'Location', 'southeast');
 if(saveFigures)
 saveas(gcf, 'Example06_ErrorConvergence', 'epsc');
 saveas(gcf, 'Example06_ErrorConvergence.fig');
+end
+
+%==============================
+% CONVERGENCE PLOT - MAX ERROR
+%==============================
+scaleFactorDelta = 1e9;
+conv_t = [8e-9 4e-9 2e-9];
+conv_low  = [max_error_low_dt1 max_error_low_dt2 max_error_low_dt3];
+conv_mid  = [max_error_mid_dt1 max_error_mid_dt2 max_error_mid_dt3];
+conv_high = [max_error_high_dt1 max_error_high_dt2 max_error_high_dt3];
+
+figure;
+semilogy(scaleFactorDelta*conv_t, conv_low, 'Color', 'r', 'LineWidth', 2);
+hold on;
+box on;
+axis([0 10 3e-4 5e-3]);
+grid on;
+ylabel('L infinity error');
+xlabel('\Delta t [ns]');
+set(gca, 'ytick', [3e-4 1e-3 5e-3])
+set(gca, 'yticklabel', {'3\cdot 10^{-4}', '10^{-3}', '5\cdot 10^{-3}'})
+h = gca;
+h.YRuler.MinorTick =  [3e-4:1e-4:9e-4 2e-3:1e-3:5e-3];
+%set(gca, 'yticklabels', [3e-4 1e-3 5e-3])
+semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
+semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
+set(gca,'FontSize',fontSize);
+legend('Bottom ball', 'Middle ball', 'Top ball', 'Location', 'southeast');
+if(saveFigures)
+saveas(gcf, 'Example06_ErrorConvergence_max', 'epsc');
+saveas(gcf, 'Example06_ErrorConvergence_max.fig');
 end
 %==============================
 % Initial Pressure
@@ -221,6 +272,7 @@ ylabel('y [mm]');
 colorbar();
 set(gca,'FontSize',fontSize);
 set(gcf, 'pos', positionYBar);
+pbaspect([1 2 1])
 if(saveFigures)
 saveas(gcf, 'Example06_InitialPressure', 'png');
 saveas(gcf, 'Example06_InitialPressure.fig');

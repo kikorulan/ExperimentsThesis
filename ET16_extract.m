@@ -56,13 +56,13 @@ Full_GD.nIter = {100};
 Full_GD.lambda = '5e-5';
 
 % Gradient Descent
-GD.extract = 0;
+GD.extract = 1;
 GD.tau = {'1', '2', '4'};
 GD.nIter = {100, 100, 100};
 GD.lambda = '1e-4';
 
 % Stochastic Gradient Descent
-SGD.extract = 0;
+SGD.extract = 1;
 SGD.tau = {'4', '8', '1.6e1'};
 SGD.nIter = {200, 30, 30};
 SGD.lambda = '1e-4';
@@ -70,7 +70,7 @@ SGD.batch = '1800';
 
 % FISTA
 FISTA.extract = 0;
-FISTA.tau = {'5e-1', '1', '2'};
+FISTA.tau = {'2e-1', '5e-1', '1'};
 FISTA.nIter = {100, 100, 30};
 FISTA.lambda = '1e-4';
 
@@ -82,7 +82,7 @@ PDHG.nIter = {100, 100, 100};
 PDHG.lambda = '1e-4';
 
 % S-PDHG
-SPDHG.extract = 0;
+SPDHG.extract = 1;
 SPDHG.tau = {'1e-1', '2e-1', '5e-1'};
 SPDHG.sigma = '5e-1';
 SPDHG.nIter = {30, 30, 30};

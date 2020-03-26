@@ -7,7 +7,7 @@ close all;
 load sensor_data.mat;
 load adjoint_data.mat;
 
-saveFigures = 0;
+saveFigures = 1;
 loadData = 1;
 %==================================================================================
 % Plot results
@@ -188,7 +188,7 @@ box on;
 axis([0 10 1e-5 1e-3]);
 set(gca, 'xtick', [0 2 4 6 8 10]);
 ylabel('REE');
-xlabel('t [ns]');
+xlabel('\Delta t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
 set(gca,'FontSize',fontSize);

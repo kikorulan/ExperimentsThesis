@@ -31,53 +31,53 @@ rel_error    = @(vect) (vect(1:end-1)-vect(2:end))./vect(2:end);
 % LOAD DATA
 load ./results/error_vectors/GD_error_lambda1em4;
 load ./results/error_vectors/SGD_error_lambda1em4_batch1800;
-load ./results/error_vectors/FISTA_error_lambda1em4;
+%load ./results/error_vectors/FISTA_error_lambda1em4;
 load ./results/error_vectors/PDHG_error_lambda1em4_sigma5em1;
 load ./results/error_vectors/SPDHG_error_lambda1em4_sigma5em1_batch100;
 
 % Save results
-saveResults = 0;
+saveResults = 1;
 
 % Plot Input
-plot_input = 0;
+plot_input = 1;
 
 % Choose index
 GD.plotIndex    = 3;
 SGD.plotIndex   = 1;
 FISTA.plotIndex = 2;
-PDHG.plotIndex  = 2;
-SPDHG.plotIndex = 1;
+PDHG.plotIndex  = 3;
+SPDHG.plotIndex = 3;
 
 % Choose subiter
 GD.subiter    = 24;
-SGD.subiter   = 30;
+SGD.subiter   = 50;
 FISTA.subiter = 30;
-PDHG.subiter  = 27;
-SPDHG.subiter = 30;
-lim_iter = 0;
+PDHG.subiter  = 26;
+SPDHG.subiter = 12;
+lim_iter = 1;
 
 % Reconstruction plots
-plot_reconGD    = 0;
-plot_reconSGD   = 0;
+plot_reconGD    = 1;
+plot_reconSGD   = 1;
 plot_reconFISTA = 0;
-plot_reconPDHG  = 0;
-plot_reconSPDHG = 0;
+plot_reconPDHG  = 1;
+plot_reconSPDHG = 1;
 
 % Auxiliary plots
 plot_auxGD    = 0;
-plot_auxSGD   = 1;
+plot_auxSGD   = 0;
 plot_auxFISTA = 0;
 plot_auxPDHG  = 0;
 plot_auxSPDHG = 0;
 
 % Converge plots
-plot_PSNR    = 0;
+plot_PSNR    = 1;
 plot_primalE = 0;
 plot_dualE   = 0;
 plot_relDE   = 0;
 plot_dataE   = 0;
 plot_regE    = 0;
-plot_relObj  = 0;
+plot_relObj  = 1;
 
 
 %========================================================================================================================
@@ -96,8 +96,8 @@ y0 = time_signal(2:end, :);
 if(plot_input)
 figure;
 imagesc(y0(1:60, :));
-xticklabels = 0:1.5:6;
-xticks = linspace(1, find(t_array > 6, 1), numel(xticklabels));
+xticklabels = 0:2:8;
+xticks = linspace(1, find(t_array > 8, 1), numel(xticklabels));
 set(gca, 'XTick', xticks, 'XTickLabel', xticklabels)
 colorbar();
 set(gca,'FontSize',15);
@@ -106,13 +106,18 @@ if(saveResults)
 saveas(gcf, './figures/ET16_forwardSignal', 'epsc');
 end
 end
-%%  % Load Sensor mask
-%%  load input_data/sensor_mask.mat
-%%  figure;
-%%  imagesc(sensor_mask);
-%%  if(saveResults)
-%%      saveas(gcf, './figures/ET16_sensorMask', 'epsc');
-%%  end
+
+% Load Sensor mask
+if(plot_input)
+load ./input_data/sensor_mask.mat
+figure;
+imagesc(sensor_mask);
+set(gca, 'FontSize', 15)
+pbaspect([1 1 1])
+if(saveResults)
+saveas(gcf, './figures/ET16_sensorMask', 'epsc');
+end
+end
 
 % Load Recon Full data
 if(plot_input)
@@ -425,11 +430,12 @@ if (lim_iter)
 else
     GD.subiter    = GD.nIter{GD.plotIndex};
     SGD.subiter   = SGD.nIter{SGD.plotIndex};
-    FISTA.subiter = FISTA.nIter{FISTA.plotIndex};
+    %FISTA.subiter = FISTA.nIter{FISTA.plotIndex};
     PDHG.subiter  = PDHG.nIter{PDHG.plotIndex};
     SPDHG.subiter = SPDHG.nIter{SPDHG.plotIndex};
 end
-maxIter = max([GD.subiter-1, SGD.subiter-1, FISTA.subiter-1, PDHG.subiter-1, SPDHG.subiter-1]);
+%maxIter = max([GD.subiter-1, SGD.subiter-1, FISTA.subiter-1, PDHG.subiter-1, SPDHG.subiter-1]);
+maxIter = max([GD.subiter-1, SGD.subiter-1, PDHG.subiter-1, SPDHG.subiter-1]);
 %======================================================================
 % PLOT PSNR
 %======================================================================
@@ -438,20 +444,21 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_psnr{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_psnr{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_psnr{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_psnr{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 maxIter 25 50]);
+axis([0 maxIter 40 50]);
 xlabel('iter/epoch');
 ylabel('PSNR');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET16_PSNR', 'epsc');
+saveas(gcf, './figures/ET16_PSNR', 'epsc');
 end
 end
 
@@ -476,7 +483,7 @@ xlabel('iter/epoch');
 ylabel('primal error');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET16_pe', 'epsc');
+saveas(gcf, './figures/ET16_pe', 'epsc');
 end
 end
 
@@ -501,7 +508,7 @@ xlabel('iter/epoch');
 ylabel('dual error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET16_de', 'epsc');
+saveas(gcf, './figures/ET16_de', 'epsc');
 end
 end
 
@@ -524,7 +531,7 @@ xlabel('iter/epoch');
 ylabel('relative error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET16_relativeDualError', 'epsc');
+saveas(gcf, './figures/ET16_relativeDualError', 'epsc');
 end
 end
 
@@ -579,20 +586,21 @@ figure();
 semilogy(0:GD.subiter-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 maxIter 1e-5 1]);
+axis([0 maxIter 1e-4 1]);
 xlabel('iter/epoch');
 ylabel('relative distance to objective');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET16_relObjective', 'epsc');
+saveas(gcf, './figures/ET16_relObjective', 'epsc');
 end
 end
 

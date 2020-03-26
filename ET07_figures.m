@@ -6,7 +6,7 @@ close all;
 
 load sensor_data.mat;
 
-saveFigures = 0;
+saveFigures = 1;
 %==================================================================================
 % Plot results
 %==================================================================================
@@ -190,7 +190,7 @@ grid on;
 box on;
 axis([0 10 2e-3 2e-1]);
 ylabel('REE');
-xlabel('t [ns]');
+xlabel('\Delta t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
 set(gca,'FontSize',fontSize);

@@ -3,7 +3,7 @@ cd /cs/research/medim/projects2/projects/frullan/Documents/HighFreqCode/Experime
 clear all;
 close all;
 
-saveFigures = 0;
+saveFigures = 1;
 %==================================================
 % Dimensions
 %==================================================
@@ -194,7 +194,7 @@ error_high_dt2 = sum(dif_high_dt2.^2)/sum(spline_high.^2);
 
 figure;
 hold on;
-axis([0 20 -.15 .15]);
+axis([0 20 -.03 .03]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt2, dif_low_dt2, 'Color', 'r', 'LineWidth', 2);
@@ -233,7 +233,7 @@ error_high_dt3 = sum(dif_high_dt3.^2)/sum(spline_high.^2);
 
 figure;
 hold on;
-axis([0 20 -.15 .15]);
+axis([0 20 -.03 .03]);
 grid on;
 box on;
 plot(scaleFactor*tForward_dt3, dif_low_dt3, 'Color', 'r', 'LineWidth', 2);
@@ -266,9 +266,9 @@ semilogy(scaleFactorDelta*conv_t, conv_low, 'Color', 'r', 'LineWidth', 2);
 hold on;
 grid on;
 box on;
-axis([0 50 1e-4 2e-1]);
+axis([0 50 1e-4 2e-2]);
 ylabel('REE');
-xlabel('t [ns]');
+xlabel('\Delta t [ns]');
 semilogy(scaleFactorDelta*conv_t, conv_mid, 'Color', 'g', 'LineWidth', 2);
 semilogy(scaleFactorDelta*conv_t, conv_high, 'Color', 'b', 'LineWidth', 2);
 set(gca,'FontSize',fontSize);

@@ -68,16 +68,16 @@ SGD.lambda = '1e-3';
 SGD.batch = '1800';
 
 % FISTA
-FISTA.extract = 1;
-FISTA.tau = {'5e-1', '1', '2'};
-FISTA.nIter = {100, 100, 30};
+FISTA.extract = 0;
+FISTA.tau = {'2e-1', '5e-1', '1'};
+FISTA.nIter = {100, 100, 100};
 FISTA.lambda = '1e-3';
 
 % PDHG
 PDHG.extract = 1;
-PDHG.tau = {'8', '1.6e1', '3.2e1'};
-PDHG.sigma = '5e-1';
-PDHG.nIter = {100, 100, 30};
+PDHG.tau = {'1', '2', '4'};
+PDHG.sigma = '1';
+PDHG.nIter = {100, 100, 100};
 PDHG.lambda = '1e-3';
 
 % SPDHG
@@ -241,7 +241,7 @@ for ii = 1:length(PDHG.tau)
         PDHG_error_dd{ii}   = [PDHG_error_dd{ii} obj_function(y0, yi, str2double(PDHG.lambda), pp_pos)];
     end
 end
-save ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
+save ./results/error_vectors/PDHG_error_lambda1em3_sigma1 PDHG_error_psnr PDHG_error_pd PDHG_error_data PDHG_error_reg PDHG_error_dd PDHG;
 end
 
 %==============================

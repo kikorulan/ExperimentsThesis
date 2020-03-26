@@ -28,7 +28,7 @@ Nz = dim(1, 3); dz = dim(2, 3);
 % PRIMAL and DUAL data
 %==================================================
 % Pressure
-u0Matrix = importdata('./results_lambda5e-5/full_data/adjoint/FB/pixelPressure_DS1.dat', ' ', 0);
+u0Matrix = importdata('./results_lambda5e-5/full_data/adjoint/FB/pixelPressure_GD_tau5e-1_lambda5e-5_iter95.dat', ' ', 0);
 u0 = matrix2cube(u0Matrix, Nz);
 % Full data
 time_signal = importdata(['./input_data/forwardSignal_reference_14400sensors_490timesteps.dat'], ' ', 0);
@@ -49,9 +49,9 @@ disp('******* DUAL DISTANCE ********');
 % PARAMETRIZATION
 %======================================================================
 % Gradient Descent - FULL DATA
-Full_GD.extract = 0;
-Full_GD.tau = {'1e1'};
-Full_GD.nIter = {100};
+Full_GD.extract = 1;
+Full_GD.tau = {'5e-1'};
+Full_GD.nIter = {95};
 Full_GD.lambda = '5e-5';
 
 % Gradient Descent
@@ -70,21 +70,21 @@ SGD.batch = '1800';
 % FISTA
 FISTA.extract = 0;
 FISTA.tau = {'5e-1', '1', '2'};
-FISTA.nIter = {30, 200, 30};
+FISTA.nIter = {100, 100, 30};
 FISTA.lambda = '1e-4';
 
 % PDHG
 PDHG.extract = 0;
 PDHG.tau = {'2', '4', '8'};
 PDHG.sigma = '5e-1';
-PDHG.nIter = {30, 104, 30};
+PDHG.nIter = {100, 100, 30};
 PDHG.lambda = '1e-4';
 
 % S-PDHG
-SPDHG.extract = 1;
-SPDHG.tau = {'1', '2', '4'};
-SPDHG.sigma = '5e-1';
-SPDHG.nIter = {50, 50, 50};
+SPDHG.extract = 0;
+SPDHG.tau = {'2', '4', '8', '1.6e1'};
+SPDHG.sigma = '1e-1';
+SPDHG.nIter = {30, 30, 30, 30};
 SPDHG.lambda = '1e-4';
 SPDHG.batch = '100';
 
@@ -103,11 +103,11 @@ for ii = 1:length(Full_GD.tau)
     for iter = 1:Full_GD.nIter{ii}-1
         disp(['    iter ', int2str(iter)]) 
        % Primal error
-        ppmatrix = importdata(['./results/full_data/pixelPressure_GD_tau', Full_GD.tau{ii}, '_lambda', Full_GD.lambda, '_iter', int2str(iter), '.dat'], ' ', 0);
+        ppmatrix = importdata(['./results_lambda5e-5/full_data/adjoint/FB/pixelPressure_GD_tau', Full_GD.tau{ii}, '_lambda', Full_GD.lambda, '_iter', int2str(iter), '.dat'], ' ', 0);
         pp = matrix2cube(ppmatrix, Nz);
         pp_pos = max(0, pp);
         % Dual error
-        tSignal = importdata(['./results/full_data/forwardSignal_GD_tau', Full_GD.tau{ii}, '_lambda', Full_GD.lambda, '_iter', int2str(iter+1), '.dat'], ' ', 0);
+        tSignal = importdata(['./results_lambda5e-5/full_data/forward/FB/forwardSignal_GD_tau', Full_GD.tau{ii}, '_lambda', Full_GD.lambda, '_iter', int2str(iter+1), '.dat'], ' ', 0);
         yi = tSignal(2:end, :);
         Full_GD_error_data{ii} = [Full_GD_error_data{ii} obj_data(y0_full, yi)];
         Full_GD_error_reg{ii}  = [Full_GD_error_reg{ii} obj_reg(str2double(Full_GD.lambda), pp_pos)];

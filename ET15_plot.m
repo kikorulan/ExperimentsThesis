@@ -37,48 +37,48 @@ load ./results/error_vectors/PDHG_error_lambda1em3_sigma5em1;
 load ./results/error_vectors/SPDHG_error_lambda1em3_sigma1em1_batch100;
 
 % Save results
-saveResults = 0;
+saveResults = 1;
 
 % Plot INPUT
-plot_input = 0;
+plot_input = 1;
 
 % Choose index
 GD.plotIndex    = 1;
 SGD.plotIndex   = 1;
 FISTA.plotIndex = 1;
-PDHG.plotIndex  = 1;
+PDHG.plotIndex  = 2;
 SPDHG.plotIndex = 1;
 
 % Choose subiter
-GD.subiter    = 67;
+GD.subiter    = 35;
 SGD.subiter   = 100;
 FISTA.subiter = 30;
-PDHG.subiter  = 100;
-SPDHG.subiter = 27;
+PDHG.subiter  = 79;
+SPDHG.subiter = 14;
 lim_iter = 1;
 
 % Reconstruction plots
-plot_reconGD    = 0;
-plot_reconSGD   = 0;
+plot_reconGD    = 1;
+plot_reconSGD   = 1;
 plot_reconFISTA = 0;
-plot_reconPDHG  = 0;
-plot_reconSPDHG = 0;
+plot_reconPDHG  = 1;
+plot_reconSPDHG = 1;
 
 % Auxiliary plots
 plot_auxGD    = 0;
 plot_auxSGD   = 0;
-plot_auxFISTA = 1;
+plot_auxFISTA = 0;
 plot_auxPDHG  = 0;
 plot_auxSPDHG = 0;
 
 % Converge plots
-plot_PSNR    = 0; 
+plot_PSNR    = 1; 
 plot_primalE = 0; 
 plot_dualE   = 0; 
 plot_relDE   = 0;
 plot_dataE   = 0;
 plot_regE    = 0; 
-plot_relObj  = 0;
+plot_relObj  = 1;
 
 %========================================================================================================================
 % PRIMAL AND DUAL DATA
@@ -127,6 +127,15 @@ saveas(gcf, './figures/ET15_pixelPressure_adjoint', 'epsc');
 end
 end
 
+% Sound Speed
+if(plot_input)
+sound_speed = importdata('./input_data/sound_speed.dat', ' ', 0);
+sound_speed = matrix2cube(sound_speed, Nz);
+plot_slice_compact(sound_speed, param);
+if(saveResults)
+saveas(gcf, './figures/ET15_sound_speed', 'epsc');
+end
+end
 %========================================================================================================================
 % RECONSTRUCTION PLOTS
 %========================================================================================================================
@@ -137,7 +146,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/FB/pixelPressure_GD_tau', G
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET15_GD'], 'epsc');
+saveas(gcf, ['./figures/ET15_GD'], 'epsc');
 end
 end
 
@@ -147,7 +156,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SFB/pixelPressure_S-GD_tau'
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET15_S-GD'], 'epsc');
+saveas(gcf, ['./figures/ET15_S-GD'], 'epsc');
 end
 end
 
@@ -157,7 +166,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/AFB/pixelPressure_FISTA_tau
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET15_FISTA'], 'epsc');
+saveas(gcf, ['./figures/ET15_FISTA'], 'epsc');
 end
 end
 
@@ -167,7 +176,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/PDHG/pixelPressure_PDHG_sig
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET15_PDHG'], 'epsc');
+saveas(gcf, ['./figures/ET15_PDHG'], 'epsc');
 end
 end
 
@@ -177,7 +186,7 @@ pixelPressureMatrix = importdata(['./results/adjoint/SPDHG/pixelPressure_S-PDHG_
 pixelPressure = max(0, matrix2cube(pixelPressureMatrix, Nz));
 plot_projection_compact(pixelPressure, param);
 if(saveResults)
-    saveas(gcf, ['./figures/ET15_S-PDHG'], 'epsc');
+saveas(gcf, ['./figures/ET15_S-PDHG'], 'epsc');
 end
 end
 
@@ -430,10 +439,11 @@ figure();
 semilogy(0:GD.subiter-1, GD_error_psnr{GD.plotIndex}(1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, SGD_error_psnr{SGD.plotIndex}(1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, FISTA_error_psnr{FISTA.plotIndex}(1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, PDHG_error_psnr{PDHG.plotIndex}(1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, SPDHG_error_psnr{SPDHG.plotIndex}(1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG', 'Location', 'southeast');
 grid on;
 box on;
 ax = gca;
@@ -443,7 +453,7 @@ xlabel('iter/epoch');
 ylabel('PSNR');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET15_PSNR', 'epsc');
+saveas(gcf, './figures/ET15_PSNR', 'epsc');
 end
 end
 
@@ -468,7 +478,7 @@ xlabel('iter/epoch');
 ylabel('primal error');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET15_pe', 'epsc');
+saveas(gcf, './figures/ET15_pe', 'epsc');
 end
 end
 
@@ -493,7 +503,7 @@ xlabel('iter/epoch');
 ylabel('dual error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET15_de', 'epsc');
+saveas(gcf, './figures/ET15_de', 'epsc');
 end
 end
 
@@ -516,7 +526,7 @@ xlabel('iter/epoch');
 ylabel('relative error');
 %set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET15_relativeDualError', 'epsc');
+saveas(gcf, './figures/ET15_relativeDualError', 'epsc');
 end
 end
 
@@ -571,20 +581,21 @@ figure();
 semilogy(0:GD.subiter-1, rel_distance(GD_error_dd{GD.plotIndex}, 1:GD.subiter), 'Color', 'r', 'Linewidth', 1.5);
 hold on;       
 semilogy(0:SGD.subiter-1, rel_distance(SGD_error_dd{SGD.plotIndex}, 1:SGD.subiter), 'Color', 'g', 'Linewidth', 1.5);
-semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
+%semilogy(0:FISTA.subiter-1, rel_distance(FISTA_error_dd{FISTA.plotIndex}, 1:FISTA.subiter), 'Color', 'b', 'Linewidth', 1.5);
 semilogy(0:PDHG.subiter-1, rel_distance(PDHG_error_dd{PDHG.plotIndex}, 1:PDHG.subiter), 'Color', 'm', 'Linewidth', 1.5);
 semilogy(0:SPDHG.subiter-1, rel_distance(SPDHG_error_dd{SPDHG.plotIndex}, 1:SPDHG.subiter), 'Color', 'c', 'Linewidth', 1.5);
-legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+%legend('FB', 'S-FB', 'AFB', 'PDHG', 'S-PDHG');
+legend('FB', 'S-FB', 'PDHG', 'S-PDHG');
 grid on;
 box on;
 ax = gca;
 ax.GridAlpha = 0.2;
-axis([0 maxIter 1e-5 1]);
+axis([0 maxIter 1e-4 1]);
 xlabel('iter/epoch');
 ylabel('relative distance to objective');
 set(gca,'FontSize',15);
 if(saveResults)
-    saveas(gcf, './figures/ET15_relObjective', 'epsc');
+saveas(gcf, './figures/ET15_relObjective', 'epsc');
 end
 end
 
